@@ -6,7 +6,6 @@ int yywrap() {
 
 %}
 
-
 DIGIT       [0-9]
 WS          [ \t\n]
 
@@ -30,4 +29,3 @@ int main() {
     yylex();
     return 0;
 }
-
