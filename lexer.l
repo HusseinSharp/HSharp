@@ -20,6 +20,8 @@ WS          [ \t\n]
 "/"         { printf("DIVIDE\n"); }
 "("         { printf("LEFT_PAREN\n"); }
 ")"         { printf("RIGHT_PAREN\n"); }
+"{"         { printf("LEFT_CURLY_BRACKET)}
+"}"         { printf("RIGHT_CURLY_BRACKET)}
 .           { fprintf(stderr, "Error: Unexpected character '%s'\n", yytext); }
 
 %%
