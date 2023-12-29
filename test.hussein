@@ -1,0 +1,5 @@
+
+ Void Main() { ##main method
+/#hello comment#/
+@var testvariable = "Hussein" ;
+ } ;
