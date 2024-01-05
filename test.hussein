@@ -1,5 +1,15 @@
 
  Void Main() { ##main method
 /#hello comment#/
-@var testvariable = "Hussein" ;
- } ;
+@var navn;
+navn = 20 ;
+@call navn ;
+navn = 40 * 3;
+@call navn ;
+@var test ;
+test = navn *10;
+@call test;
+test = test/6 ;
+@call test; 
+
+ };
