@@ -4,7 +4,19 @@
 #include <string.h>
 extern FILE *yyin;
 
+#ifdef _WIN32
+
+#include <windows.h>
+HINSTANCE hInstance;
+#endif
+
 int main(int argc, char *argv[]) {
+#ifdef _WIN32
+  hInstance = GetModuleHandle(NULL);
+#endif
+  
+
+
     initialize_hashtable();
 
     if (argc != 2) {

@@ -1,0 +1,27 @@
+// create a .rc file
+paste this code : IDI_ICON1 ICON DISCARDABLE "path_to_your_icon.ico"
+
+// open cmd or create a bash file and paste this code:
+windres input_file.rc -O coff -o output_file.res
+
+//paste this to the c code:
+
+#ifdef _WIN32
+
+#include <windows.h>
+HINSTANCE hInstance;
+
+
+// paste this into the main function
+
+#ifdef _WIN32
+  hInstance = GetModuleHandle(NULL);
+#endif
+  
+
+
+// compiling statement for my program
+gcc main.c hashtable.dll lex.yy.c parser.tab.c fileformat.res -o your_program.exe
+
+
+

@@ -1,5 +1,4 @@
-
- Void Main() { ##main method
+Void Main() { ##main method
 /#hello comment#/
 @var navn;
 navn = 20 ;
