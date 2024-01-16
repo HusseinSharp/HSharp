@@ -1,4 +1,4 @@
-Void Main() { ##main method
+Void Main() { ## Copyright (c) 2023 HusseinSharp(H#)
 /#hello comment#/
 @var navn;
 navn = 20 ;
