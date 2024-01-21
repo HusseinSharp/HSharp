@@ -1,14 +1,14 @@
-Void Main() { ##main method
-/#hello comment#/
-@var navn;
-navn = 20 ;
-@call navn ;
-navn = 40 * 3;
-@call navn ;
-@var test ;
-test = navn *10;
-@call test;
-test = test/6 ;
-@call test; 
-
- };
+Void Main() {
+## just a comment for testing
+@var tall ;
+tall = 20 ;
+@call tall ;
+test [ ];
+test [0] = 3 * 3 ;
+@call test [0] ;
+test [1] = 6 ;
+@call test[1] ;
+@var sum ;
+sum = test[0] * test[1] ;
+@call sum ;
+};
