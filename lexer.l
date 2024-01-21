@@ -1,3 +1,4 @@
+// Copyright (c) 2023 HusseinSharp(H#)
 %{
 #include <stdio.h>
 #include <stdlib.h>

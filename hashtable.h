@@ -1,4 +1,5 @@
 // hashtable.h
+// Copyright (c) 2023 HusseinSharp(H#)
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
