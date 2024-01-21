@@ -26,6 +26,8 @@ IDENT     [a-zA-Z]
 ")"        { return RPAR; }
 "{"        {  return LCB; }
 "}"        {  return RCB; }
+"["        { return LSB;}
+"]"        {return RSB ;}
 "##".*     {  }
 "/#"[^#]*"#/" {  }
 "@var"     {return VAR;}

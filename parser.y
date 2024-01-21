@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hashtable.h"
-
 %}
 
 %union {
@@ -27,6 +26,10 @@
 %token VAR
 %token <num> NUMBER
 %token <str> IDENT
+%token <str> LSB
+%token <str> RSB
+%token <str> COMMA
+
 
 %type <num> expr
 %type <str> var_declaration assignment display
@@ -45,14 +48,18 @@ statement_list: /* empty */
 
 statement: var_declaration | assignment | display;
 
-var_declaration: VAR IDENT { insert_variable($2); };
+var_declaration:  IDENT LSB RSB { insert_array($1); }
+               | VAR IDENT { insert_variable($2); };
 
-assignment: IDENT EQUALS expr { update_variable($1, $3); };
+assignment: IDENT EQUALS expr { update_variable($1, $3); }
+          | IDENT LSB expr RSB EQUALS expr { update_array_element($1, $3, $6); };
 
-display: CALL IDENT { display_variable($2); };
+display: CALL IDENT { display_variable($2); }
+       | CALL IDENT LSB expr RSB { display_array_element($2, $4); };
 
 expr: NUMBER { $$ = $1; }
    | IDENT { $$ = get_variable_value($1); }
+   | IDENT LSB expr RSB { $$ = get_array_element_value($1, $3); }
    | expr PLUS expr { $$ = $1 + $3; }
    | expr MINUS expr { $$ = $1 - $3; }
    | expr MULTIPLY expr { $$ = $1 * $3; }
