@@ -42,14 +42,14 @@ void insert_variable(const char *name) {
     hash_table[index] = new_node;
 }
 
-void insert_array(const char *name) {
+void insert_array(const char *name, int array_size) {
     unsigned int index = hash(name);
     
     struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
     new_node->name = strdup(name);
     new_node->is_array = 1;
-    new_node->value = malloc(sizeof(int) * 100);  // Example: assuming array size is 100 integers
-    for (int i = 0; i < 100; ++i) {
+    new_node->value = malloc(array_size);  // Example: assuming array size is 100 integers
+    for (int i = 0; i < array_size; ++i) {
         ((int *)new_node->value)[i] = 0;  // Default values for the array
     }
     new_node->next = hash_table[index];
@@ -72,13 +72,13 @@ void update_variable(const char *name, int value) {
     fprintf(stderr, "Error: Variable '%s' not declared\n", name);
 }
 
-void update_array_element(const char *name, int index, int value) {
+void update_array_element(const char *name, int index, int value, int array_size) {
     unsigned int array_index = hash(name);
     
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < 100) {
+            if (index >= 0 && index < array_size) {
                 ((int *)current->value)[index] = value;
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
@@ -106,13 +106,13 @@ int get_variable_value(const char *name) {
     return 0;  // Return a default value
 }
 
-int get_array_element_value(const char *name, int index) {
+int get_array_element_value(const char *name, int index, int array_size) {
     unsigned int array_index = hash(name);
     
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < 100) {
+            if (index >= 0 && index < array_size) {
                 return ((int *)current->value)[index];
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
@@ -141,13 +141,13 @@ void display_variable(const char *name) {
     fprintf(stderr, "Error: Variable '%s' not declared\n", name);
 }
 
-void display_array_element(const char *name, int index) {
+void display_array_element(const char *name, int index, int array_size) {
     unsigned int array_index = hash(name);
     
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < 100) {
+            if (index >= 0 && index < array_size) {
                 printf("%s[%d] = %d\n", name, index, ((int *)current->value)[index]);
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
