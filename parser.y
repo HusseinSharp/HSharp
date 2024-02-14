@@ -1,14 +1,17 @@
-// Copyright (c) 2023 HusseinSharp(H#)
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hashtable.h"
+int array_size;
+
 %}
 
 %union {
    int num;
    char *str;
+   struct ast *ast_node;
+   struct symlist *arg_list;
 }
 
 %token <str> EQUALS
@@ -24,16 +27,17 @@
 %token  MAIN
 %token <str> CALL
 %token VAR
+
 %token <num> NUMBER
 %token <str> IDENT
 %token <str> LSB
 %token <str> RSB
 %token <str> COMMA
 
-
 %type <num> expr
 %type <str> var_declaration assignment display
 %type <str> statement_list
+
 
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
@@ -48,18 +52,22 @@ statement_list: /* empty */
 
 statement: var_declaration | assignment | display;
 
-var_declaration:  IDENT LSB RSB { insert_array($1); }
+var_declaration:  IDENT LSB expr RSB { insert_array($1,$3); array_size = $3;}
                | VAR IDENT { insert_variable($2); };
 
 assignment: IDENT EQUALS expr { update_variable($1, $3); }
-          | IDENT LSB expr RSB EQUALS expr { update_array_element($1, $3, $6); };
+          | IDENT LSB expr RSB EQUALS expr { update_array_element($1, $3, $6,array_size); };
 
 display: CALL IDENT { display_variable($2); }
-       | CALL IDENT LSB expr RSB { display_array_element($2, $4); };
+       | CALL IDENT LSB expr RSB { display_array_element($2, $4,array_size); };
+
+
+
+
 
 expr: NUMBER { $$ = $1; }
    | IDENT { $$ = get_variable_value($1); }
-   | IDENT LSB expr RSB { $$ = get_array_element_value($1, $3); }
+   | IDENT LSB expr RSB { $$ = get_array_element_value($1, $3,array_size); }
    | expr PLUS expr { $$ = $1 + $3; }
    | expr MINUS expr { $$ = $1 - $3; }
    | expr MULTIPLY expr { $$ = $1 * $3; }
@@ -73,32 +81,7 @@ expr: NUMBER { $$ = $1; }
    }
    | '(' expr ')' { $$ = $2; }
    ;
-
-%%
-/*
-int main(int argc, char *argv[]) {
-    initialize_hashtable();
-
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <filename.hussein>\n", argv[0]);
-        return 1;
-    }
-
-    FILE *file = fopen(argv[1], "r");
-    if (!file) {
-        perror("Error opening file");
-        return 1;
-    }
-
-    yyin = file;
-
-    yyparse();
-
-    fclose(file);
-    return 0;
-}
-*/
-int yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
-    return 0;
+   %%
+   void yyerror(const char *s) {
+    fprintf(stderr, "Parse error: %s\n", s);
 }
