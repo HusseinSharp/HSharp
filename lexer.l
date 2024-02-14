@@ -1,4 +1,3 @@
-// Copyright (c) 2023 HusseinSharp(H#)
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,10 +27,11 @@ IDENT     [a-zA-Z]
 "}"        {  return RCB; }
 "["        { return LSB;}
 "]"        {return RSB ;}
-"##".*     {  }
+
+"##".*      {  }
 "/#"[^#]*"#/" {  }
 "@var"     {return VAR;}
-"Void Main()"  { return MAIN;}
+"Void Main()"  { return MAIN;}  
 "@call"        {return CALL;}
 .          { fprintf(stderr, "Error: Unexpected character '%s'\n", yytext); }
 
