@@ -1,5 +1,3 @@
-// hashtable.c
-//Copyright (c) 2023 HusseinSharp(H#)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +9,7 @@ struct Node {
     char *name;
     int is_array;  // Indicates whether the variable is an array
     void *value;   // Value can be int or int array
+    int size;      // Size of the array
     struct Node *next;
 };
 
@@ -48,14 +47,14 @@ void insert_array(const char *name, int array_size) {
     struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
     new_node->name = strdup(name);
     new_node->is_array = 1;
-    new_node->value = malloc(array_size);  // Example: assuming array size is 100 integers
+    new_node->size = array_size;
+    new_node->value = malloc(array_size * sizeof(int));  // Allocate space for the array
     for (int i = 0; i < array_size; ++i) {
         ((int *)new_node->value)[i] = 0;  // Default values for the array
     }
     new_node->next = hash_table[index];
     hash_table[index] = new_node;
 }
-
 
 void update_variable(const char *name, int value) {
     unsigned int index = hash(name);
@@ -78,7 +77,7 @@ void update_array_element(const char *name, int index, int value, int array_size
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < array_size) {
+            if (index >= 0 && index < current->size) {
                 ((int *)current->value)[index] = value;
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
@@ -112,7 +111,7 @@ int get_array_element_value(const char *name, int index, int array_size) {
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < array_size) {
+            if (index >= 0 && index < current->size) {
                 return ((int *)current->value)[index];
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
@@ -147,7 +146,7 @@ void display_array_element(const char *name, int index, int array_size) {
     struct Node *current = hash_table[array_index];
     while (current != NULL) {
         if (strcmp(current->name, name) == 0 && current->is_array) {
-            if (index >= 0 && index < array_size) {
+            if (index >= 0 && index < current->size) {
                 printf("%s[%d] = %d\n", name, index, ((int *)current->value)[index]);
             } else {
                 fprintf(stderr, "Error: Array index out of bounds\n");
@@ -159,4 +158,3 @@ void display_array_element(const char *name, int index, int array_size) {
     
     fprintf(stderr, "Error: Variable '%s' not declared or is not an array\n", name);
 }
-
