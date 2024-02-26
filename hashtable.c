@@ -10,6 +10,8 @@ struct Node {
     int is_array;  // Indicates whether the variable is an array
     void *value;   // Value can be int or int array
     int size;      // Size of the array
+    int rows;
+    int cols;
     struct Node *next;
 };
 
@@ -56,6 +58,26 @@ void insert_array(const char *name, int array_size) {
     hash_table[index] = new_node;
 }
 
+void insert_2d_array(const char *name, int rows, int cols) {
+    unsigned int index = hash(name);
+    
+    struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
+    new_node->name = strdup(name);
+    new_node->is_array = 1;
+    new_node->rows = rows;
+    new_node->cols = cols;
+    new_node->size = rows * cols;
+    new_node->value = malloc(rows * sizeof(int *)); // Allocate space for rows
+    for (int i = 0; i < rows; ++i) {
+        ((int **)new_node->value)[i] = malloc(cols * sizeof(int)); // Allocate space for columns
+        for (int j = 0; j < cols; ++j) {
+            ((int **)new_node->value)[i][j] = 0;  // Default values for the 2D array
+        }
+    }
+    new_node->next = hash_table[index];
+    hash_table[index] = new_node;
+}
+
 void update_variable(const char *name, int value) {
     unsigned int index = hash(name);
     
@@ -88,6 +110,25 @@ void update_array_element(const char *name, int index, int value, int array_size
     }
     
     fprintf(stderr, "Error: Variable '%s' not declared or is not an array\n", name);
+}
+
+void update_2d_array_element(const char *name, int row, int col, int value, int rows, int cols) {
+    unsigned int array_index = hash(name);
+    
+    struct Node *current = hash_table[array_index];
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0 && current->is_array) {
+            if (row >= 0 && row < current->rows && col >= 0 && col < current->cols) {
+                ((int **)current->value)[row][col] = value;
+            } else {
+                fprintf(stderr, "Error: 2D Array index out of bounds\n");
+            }
+            return;
+        }
+        current = current->next;
+    }
+    
+    fprintf(stderr, "Error: Variable '%s' not declared or is not a 2D array\n", name);
 }
 
 int get_variable_value(const char *name) {
@@ -125,6 +166,29 @@ int get_array_element_value(const char *name, int index, int array_size) {
     return 0;  // Return a default value
 }
 
+int get_2d_array_element_value(const char *name, int row, int col, int rows, int cols) {
+    unsigned int array_index = hash(name);
+    
+    struct Node *current = hash_table[array_index];
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0 && current->is_array) {
+            if (row >= 0 && row < current->rows && col >= 0 && col < current->cols) {
+                return ((int **)current->value)[row][col];
+            } else {
+                fprintf(stderr, "Error: 2D Array index out of bounds\n");
+                return 0;  // Return a default value
+            }
+        }
+        current = current->next;
+    }         
+    
+    fprintf(stderr, "Error: Variable '%s' not declared or is not a 2D array\n", name);
+    return 0;  // Return a default value
+}
+
+
+
+
 void display_variable(const char *name) {
     unsigned int index = hash(name);
     
@@ -157,4 +221,23 @@ void display_array_element(const char *name, int index, int array_size) {
     }
     
     fprintf(stderr, "Error: Variable '%s' not declared or is not an array\n", name);
+}
+
+void display_2d_array_element(const char *name, int row, int col, int rows, int cols) {
+    unsigned int array_index = hash(name);
+    
+    struct Node *current = hash_table[array_index];
+    while (current != NULL) {
+        if (strcmp(current->name, name) == 0 && current->is_array) {
+            if (row >= 0 && row < current->rows && col >= 0 && col < current->cols) {
+                printf("%s[%d][%d] = %d\n", name, row, col, ((int **)current->value)[row][col]);
+            } else {
+                fprintf(stderr, "Error: 2D Array index out of bounds\n");
+            }
+            return;
+        }
+        current = current->next;
+    }
+    
+    fprintf(stderr, "Error: Variable '%s' not declared or is not a 2D array\n", name);
 }
