@@ -3,7 +3,7 @@ Void Main() {
 @var tall ;
 tall = 20 ;
 @call tall ;
-test [1];
+test [2];
 test [0] = 3 * 3 ;
 @call test [0] ;
 test [1] = 6 ;
