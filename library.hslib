@@ -1,0 +1,6 @@
+## rss comment
+Void Main() {
+@var navn;
+navn = 20;
+@call navn;
+};

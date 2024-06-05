@@ -1,0 +1,4 @@
+Library{
+s = s*2;
+Call s;
+};

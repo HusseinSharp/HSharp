@@ -1,0 +1,5 @@
+Library{
+Var s;
+ s = 50;
+  Call s; 
+};

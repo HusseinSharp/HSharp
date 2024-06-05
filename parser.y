@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hashtable.h"
+#include "garbagecollection.h"
 int array_size;
 int twod_array_size_row;
 int twod_array_size_col;
@@ -26,33 +27,50 @@ int twod_array_size_col;
 %token <str> LCB
 %token <str> RCB
 %token  MAIN
+%token LIBDEF
+%token FREEMEM
 %token <str> CALL
 %token VAR
+%token FILENAME
 
 %token <num> NUMBER
 %token <str> IDENT
 %token <str> LSB
 %token <str> RSB
 %token <str> COMMA
-
+%token IMPORT
 %type <num> expr
 %type <str> var_declaration assignment display
 %type <str> statement_list
+%type <str> start_stmt
 
 
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
 
+%start start_stmt
+
 %%
 
-mainprog: MAIN LCB statement_list RCB SEMICOLON;
+start_stmts: mainprog| libprogstart;
+
+start_stmt: /*empty */
+          | start_stmt start_stmts
+          ;
+
+libprogstart: LIBDEF LCB statement_list RCB SEMICOLON
+
+mainprog: import_list MAIN LCB statement_list RCB SEMICOLON;
+        
 
 statement_list: /* empty */
               | statement_list statement SEMICOLON
               ;
-
-statement: var_declaration | assignment | display;
-
+import_list: /* empty */
+           | import_list IMPORT_stmt SEMICOLON
+           ;
+statement: var_declaration | assignment | display|freememory;
+IMPORT_stmt: IMPORT FILENAME
 var_declaration:  IDENT LSB expr RSB { insert_array($1,$3); array_size = $3;}
                | VAR IDENT { insert_variable($2); }
 	       | IDENT LSB expr RSB LSB expr RSB {insert_2d_array($1, $3, $6);twod_array_size_col=$6; twod_array_size_row=$3;};
@@ -65,6 +83,19 @@ display: CALL IDENT { display_variable($2); }
        | CALL IDENT LSB expr RSB { display_array_element($2, $4,array_size); }
        | CALL IDENT LSB expr RSB LSB expr RSB { display_2d_array_element($2, $4, $7,twod_array_size_row,twod_array_size_col); };
 
+freememory: FREEMEM LPAR IDENT RPAR {
+// Remove the memory block from garbage collection
+
+     // Get pointer to the memory block based on IDENT
+                                        void *ptr = get_memory_block_pointer($3);
+                                        if(ptr){
+                                         remove_from_garbage_collection(ptr);
+                                        }
+                                         else {
+                                             fprintf(stderr, "Error: Variable '%s' not found\n", $3);
+                                       }
+             }             
+                                       
 
 
 

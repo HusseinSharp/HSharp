@@ -2,8 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "parser.tab.h"
+#include "testparser.tab.h"
 char* yytext;
+
+#define MAX_INCLUDE_DEPTH 100
+
+static FILE* file_stack[MAX_INCLUDE_DEPTH];
+static int file_stack_top = -1;
 
 void handle_include(const char* filename) {
     const char *ext = strrchr(filename, '.');
@@ -17,14 +22,26 @@ void handle_include(const char* filename) {
         fprintf(stderr, "Error opening library file %s\n", filename);
         exit(EXIT_FAILURE);
     }
+    
+    if (file_stack_top >= MAX_INCLUDE_DEPTH - 1) {
+        fprintf(stderr, "Error: Maximum include depth exceeded\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    file_stack[++file_stack_top] = file;
     yypush_buffer_state(yy_create_buffer(file, YY_BUF_SIZE));
     printf("opening file %s\n", filename);
 }
 
 void finish_include() {
-    yypop_buffer_state();
-    if (!YY_CURRENT_BUFFER) {
-        printf("closing library file\n");
+    if (file_stack_top >= 0) {
+        fclose(file_stack[file_stack_top]);
+        file_stack[file_stack_top] = NULL;
+        file_stack_top--;
+        yypop_buffer_state();
+        if (file_stack_top < 0) {
+            printf("closing library file\n");
+        }
     }
 }
 
@@ -35,14 +52,14 @@ void print_debug(const char *msg) {
 
 DIGIT      [0-9]
 WS         [ \t\n]
-IDENT      [a-zA-Z_][a-zA-Z0-9_]*
+IDENT      [a-zA-Z]
 
 %option stack
 %x INCL
 
 %%
 
-"@import" {
+"Import" {
     print_debug("@import detected");
     BEGIN(INCL); return IMPORT;
 }
@@ -51,21 +68,24 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
     char filename[256];
     sscanf(yytext, " \"%[^\"]\"", filename);
     handle_include(filename);
-    BEGIN(INITIAL);
+    BEGIN(0);
     print_debug("Including file");
     yyparse();
     return FILENAME;
 }
 
 <INCL><<EOF>> {
-    print_debug("End of included file");
-    finish_include();
-    BEGIN(INITIAL);
+    if (file_stack_top >= 0) {
+        print_debug("End of included file");
+        finish_include();
+    }
+    BEGIN(0);
+    return 0;
 }
 
 {WS}        /* Ignore whitespace */
-{DIGIT}+    { yylval.num = atoi(yytext); print_debug("Number detected"); return NUMBER; }
-{IDENT}     { yylval.str = strdup(yytext); print_debug("Identifier detected"); return IDENT; }
+{DIGIT}+    { yylval.num = atoi(yytext);  return NUMBER; }
+{IDENT}     { yylval.str = strdup(yytext);  return IDENT; }
 "+"         { print_debug("PLUS detected"); return PLUS; }
 "-"         { print_debug("MINUS detected"); return MINUS; }
 "*"         { print_debug("MULTIPLY detected"); return MULTIPLY; }
@@ -78,16 +98,22 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
 "}"         { print_debug("RCB detected"); return RCB; }
 "["         { print_debug("LSB detected"); return LSB; }
 "]"         { print_debug("RSB detected"); return RSB; }
-"@Free"    { print_debug("FREEMEM detected"); return FREEMEM; }
-"##".*       { print_debug("Comment detected"); /* ignore comments */ }
+"Free"      { print_debug("FREEMEM detected"); return FREEMEM; }
+"##".*      { print_debug("Comment detected"); /* ignore comments */ }
 "/#"[^#]*"#/" { print_debug("Block comment detected"); /* ignore block comments */ }
-"@var"      { print_debug("VAR detected"); return VAR; }
-"Void Main()" { print_debug("MAIN detected"); return MAIN; }  
-"@call"     { print_debug("CALL detected"); return CALL; }
+"Var"       { print_debug("VAR detected"); return VAR; }
+"Void Main()" { print_debug("MAIN detected"); return MAIN; }
+"Call"      { print_debug("CALL detected"); return CALL; }
+"Library"   { return LIBDEF; }
 .           { fprintf(stderr, "Error: Unexpected character '%s'\n", yytext); }
 
 %%
 
 int yywrap() {
+    if (file_stack_top >= 0) {
+        print_debug("End of included file");
+        finish_include();
+        return 0;
+    }
     return 1;
 }

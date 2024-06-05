@@ -1,4 +1,4 @@
-#include "parser.tab.h"
+#include "testparser.tab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +10,7 @@ HINSTANCE hInstance;
 #endif
 
 int main(int argc, char *argv[]) {
+   
 #ifdef _WIN32
     hInstance = GetModuleHandle(NULL);
 #endif
