@@ -52,7 +52,8 @@ void print_debug(const char *msg) {
 
 DIGIT      [0-9]
 WS         [ \t\n]
-IDENT      [a-zA-Z]
+IDENT      [a-zA-Z][a-zA-Z0-9]*
+
 
 %option stack
 %x INCL
@@ -83,8 +84,14 @@ IDENT      [a-zA-Z]
     return 0;
 }
 
+
 {WS}        /* Ignore whitespace */
 {DIGIT}+    { yylval.num = atoi(yytext);  return NUMBER; }
+"Var"       { print_debug("VAR detected"); return VAR; }
+"Void Main()" { print_debug("MAIN detected"); return MAIN; }
+"Call"      { print_debug("CALL detected"); return CALL; }
+"Library"   { return LIBDEF; }
+"Free"      { print_debug("FREEMEM detected"); return FREEMEM; }
 {IDENT}     { yylval.str = strdup(yytext);  return IDENT; }
 "+"         { print_debug("PLUS detected"); return PLUS; }
 "-"         { print_debug("MINUS detected"); return MINUS; }
@@ -98,14 +105,10 @@ IDENT      [a-zA-Z]
 "}"         { print_debug("RCB detected"); return RCB; }
 "["         { print_debug("LSB detected"); return LSB; }
 "]"         { print_debug("RSB detected"); return RSB; }
-"Free"      { print_debug("FREEMEM detected"); return FREEMEM; }
 "##".*      { print_debug("Comment detected"); /* ignore comments */ }
 "/#"[^#]*"#/" { print_debug("Block comment detected"); /* ignore block comments */ }
-"Var"       { print_debug("VAR detected"); return VAR; }
-"Void Main()" { print_debug("MAIN detected"); return MAIN; }
-"Call"      { print_debug("CALL detected"); return CALL; }
-"Library"   { return LIBDEF; }
 .           { fprintf(stderr, "Error: Unexpected character '%s'\n", yytext); }
+
 
 %%
 

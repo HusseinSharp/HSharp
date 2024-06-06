@@ -1,6 +1,8 @@
 Import "babas.hslib" 
 Import "nano.hslib" 
+Import "library.hslib"
 Void Main(){
-s = 40;
-Call s;
+Var resultat;
+resultat = 60;
+Call resultat;
 };

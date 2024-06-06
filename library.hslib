@@ -1,6 +1,5 @@
-## rss comment
-Void Main() {
-@var navn;
-navn = 20;
-@call navn;
+Library{
+    Var bibliotek;
+    bibliotek = 20;
+    Call bibliotek;
 };

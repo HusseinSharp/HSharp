@@ -1,5 +1,5 @@
 Library{
-Var s;
- s = 50;
-  Call s; 
+Var a;
+ a = 12;
+  Call a; 
 };

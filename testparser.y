@@ -128,7 +128,7 @@ expr: NUMBER { $$ = $1; }
            $$ = 0; // You can handle division by zero differently if needed
        }
    }
-   | '(' expr ')' { $$ = $2; }
+   | LPAR expr RPAR { $$ = $2; }
    ;
 
 %%
