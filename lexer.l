@@ -61,7 +61,7 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
 %%
 
 "Import" {
-    print_debug("@import detected");
+  
     BEGIN(INCL); return IMPORT;
 }
 
@@ -70,14 +70,13 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
     sscanf(yytext, " \"%[^\"]\"", filename);
     handle_include(filename);
     BEGIN(0);
-    print_debug("Including file");
     yyparse();
     return FILENAME;
 }
 
 <INCL><<EOF>> {
     if (file_stack_top >= 0) {
-        print_debug("End of included file");
+        
         finish_include();
     }
     BEGIN(0);
@@ -87,25 +86,25 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
 
 {WS}        /* Ignore whitespace */
 {DIGIT}+    { yylval.num = atoi(yytext);  return NUMBER; }
-"Var"       { print_debug("VAR detected"); return VAR; }
-"Void Main()" { print_debug("MAIN detected"); return MAIN; }
-"Call"      { print_debug("CALL detected"); return CALL; }
+"Var"       { return VAR; }
+"Void Main()" {  return MAIN; }
+"Call"      {  return CALL; }
 "Library"   { return LIBDEF; }
-"Free"      { print_debug("FREEMEM detected"); return FREEMEM; }
+"Free"      {  return FREEMEM; }
 {IDENT}     { yylval.str = strdup(yytext);  return IDENT; }
-"+"         { print_debug("PLUS detected"); return PLUS; }
-"-"         { print_debug("MINUS detected"); return MINUS; }
-"*"         { print_debug("MULTIPLY detected"); return MULTIPLY; }
-"/"         { print_debug("DIVIDE detected"); return DIVIDE; }
-"="         { print_debug("EQUALS detected"); return EQUALS; }
-";"         { print_debug("SEMICOLON detected"); return SEMICOLON; }
-"("         { print_debug("LPAR detected"); return LPAR; }
-")"         { print_debug("RPAR detected"); return RPAR; }
-"{"         { print_debug("LCB detected"); return LCB; }
-"}"         { print_debug("RCB detected"); return RCB; }
-"["         { print_debug("LSB detected"); return LSB; }
-"]"         { print_debug("RSB detected"); return RSB; }
-"##".*      { print_debug("Comment detected"); /* ignore comments */ }
+"+"         {  return PLUS; }
+"-"         { return MINUS; }
+"*"         {  return MULTIPLY; }
+"/"         {  return DIVIDE; }
+"="         {  return EQUALS; }
+";"         {  return SEMICOLON; }
+"("         {  return LPAR; }
+")"         {  return RPAR; }
+"{"         {  return LCB; }
+"}"         {  return RCB; }
+"["         { return LSB; }
+"]"         {  return RSB; }
+"##".*      { /* ignore comments */ }
 "/#"[^#]*"#/" { print_debug("Block comment detected"); /* ignore block comments */ }
 .           { fprintf(stderr, "Error: Unexpected character '%s'\n", yytext); }
 
@@ -114,7 +113,7 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
 
 int yywrap() {
     if (file_stack_top >= 0) {
-        print_debug("End of included file");
+       
         finish_include();
         return 0;
     }
