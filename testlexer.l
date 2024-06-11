@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "testparser.tab.h"
+#include "parser.tab.h"
 char* yytext;
 
 #define MAX_INCLUDE_DEPTH 100
@@ -52,7 +52,7 @@ void print_debug(const char *msg) {
 
 DIGIT      [0-9]
 WS         [ \t\n]
-IDENT      [a-zA-Z][a-zA-Z0-9]*
+IDENT      [a-zA-Z_][a-zA-Z0-9_]*
 
 
 %option stack
