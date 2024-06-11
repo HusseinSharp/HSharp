@@ -1,6 +1,6 @@
-Import "babas.hslib" 
-Import "nano.hslib" 
-Import "library.hslib"
+Import "filen.hslib" 
+Import "filto.hslib" 
+Import "filtre.hslib"
 Void Main(){
 Var resultat;
 resultat = 60;
