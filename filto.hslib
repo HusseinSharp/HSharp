@@ -1,0 +1,5 @@
+Library{
+Var b;
+b = a*2;
+Call b;
+};

@@ -1,14 +1,8 @@
-Void Main() {
-## just a comment for testing
-@var tall ;
-tall = 20 ;
-@call tall ;
-test [2];
-test [0] = 3 * 3 ;
-@call test [0] ;
-test [1] = 6 ;
-@call test[1] ;
-@var sum ;
-sum = test[0] * test[1] ;
-@call sum ;
+Import "filen.hslib" 
+Import "filto.hslib" 
+Import "filtre.hslib"
+Void Main(){
+Var resultat;
+resultat = 60;
+Call resultat;
 };

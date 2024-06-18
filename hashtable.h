@@ -3,6 +3,24 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
+#define HASH_SIZE 101
+
+struct Node {
+    char *name;
+    int is_array;  // Indicates whether the variable is an array
+    void *value;   // Value can be int or int array
+    int size;      // Size of the array
+    int rows;
+    int cols;
+    struct Node *next;
+};
+
+extern struct Node *hash_table[HASH_SIZE];  // Declare hash_table as external
+
+unsigned int hash(const char *str); // Ensure the hash function is declared
+
+
+
 void initialize_hashtable();
 void insert_variable(const char *name);
 void insert_array(const char *name, int array_size);

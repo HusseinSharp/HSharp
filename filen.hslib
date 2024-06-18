@@ -1,0 +1,5 @@
+Library{
+Var a;
+ a = 12;
+  Call a; 
+};

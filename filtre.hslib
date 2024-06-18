@@ -1,0 +1,5 @@
+Library{
+    Var bibliotek;
+    bibliotek = 20;
+    Call bibliotek;
+};
