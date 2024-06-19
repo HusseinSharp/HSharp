@@ -95,6 +95,7 @@ IDENT      [a-zA-Z_][a-zA-Z0-9_]*
     }
 }
 {DIGIT}+    { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.num = atoi(yytext);  return NUMBER; }
+"-"{DIGIT}+ { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.num = -atoi(yytext+1); return NUMBER; }
 "Var"       { strncpy(current_token_text, yytext, sizeof(current_token_text)); return VAR; }
 "Void Main()" { strncpy(current_token_text, yytext, sizeof(current_token_text)); return MAIN; }
 "Call"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return CALL; }
