@@ -1,5 +1,5 @@
 Library{
-Var b;
-b = a*2;
+Var a = 20;
+Var b = 30 * a ;
 Call b;
 };

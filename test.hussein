@@ -1,8 +1,29 @@
-Import "filen.hslib" 
-Import "filto.hslib" 
-Import "filtre.hslib"
+/#
+-----------------------------------------------------------
+|                                                         |
+|        A program that calculate the area of a circle    |
+|        using the radius and pi constant                 |
+|       using the formula: A = PI * (Radius * Radius)     |
+|                                                         |              
+|           program created by: Hussein Abdul-Ameer       |
+|                                                         |
+|                                                         |
+|                                                         |
+-----------------------------------------------------------
+#/
 Void Main(){
-Var resultat;
-resultat = 60;
-Call resultat;
+Var PITEXT ="PI ER : ";  ## pi string for output
+Var PINUM = 3.14159265359; ## pi constant
+Var Radius = 15;       ## radius variable
+Var RadiusTEXT = "Radius er: ";  ## radius text
+Var Areal = PINUM * (Radius * Radius); ## areal variable
+Var String = PITEXT + PINUM;  ## string for output
+Var AREALTEXT ="AREAL ER: "; ## string for output
+Var StringTO = AREALTEXT + Areal; ## string for output
+Var StringTRE = RadiusTEXT + Radius; ## string for output
+
+Call StringTRE;  ## print string to screen
+Call String;   ## print string to screen
+Call StringTO;  ## print string to screen
+
 };

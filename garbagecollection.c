@@ -18,8 +18,8 @@ void add_to_garbage_collection(void *ptr) {
     struct MemoryBlock *current = garbage_collection;
     while (current != NULL) {
         if (current->ptr == ptr) {
-            printf("Memory block %p is already in the garbage collection\n", ptr); // Debug print
-            return; // Already in the list, do not add again
+            // Memory block is already in the garbage collection list
+            return;
         }
         current = current->next;
     }
@@ -33,7 +33,6 @@ void add_to_garbage_collection(void *ptr) {
     block->ptr = ptr;
     block->next = garbage_collection;
     garbage_collection = block;
-   // printf("Added to garbage collection: %p\n", ptr); // Debug print
 }
 
 // Function to free all memory blocks tracked by garbage collection
@@ -42,7 +41,6 @@ void garbage_collect() {
     while (current != NULL) {
         struct MemoryBlock *temp = current;
         current = current->next;
-       // printf("Freeing: %p\n", temp->ptr); // Debug print
         free(temp->ptr);
         free(temp);
     }
@@ -65,7 +63,6 @@ void remove_from_garbage_collection(void *ptr) {
                 // If the found block is the head of the list
                 garbage_collection = current->next;
             }
-           // printf("Removing from garbage collection: %p\n", ptr); // Debug print
             free(current);
             return;
         }
@@ -75,21 +72,23 @@ void remove_from_garbage_collection(void *ptr) {
     }
 
     // If the specified memory block is not found
-    fprintf(stderr, "Error: Memory block not found in garbage collection: %p\n", ptr); // Debug print
+    fprintf(stderr, "Error: Memory block not found in garbage collection: %p\n", ptr);
 }
 
 // Function to get a memory block pointer from the hashtable
 void* get_memory_block_pointer(const char *name) {
-    unsigned int index = hash(name); // Ensure hash function is accessible
-
-    struct Node *current = hash_table[index]; // Access the hashtable
-    while (current != NULL) {
-        if (strcmp(current->name, name) == 0) {
-            return current->value;
+    for (int depth = current_scope_depth; depth >= 0; --depth) {
+        unsigned int index = hash(name);
+        struct Node *current = symbol_table_stack[depth][index];
+        while (current != NULL) {
+            if (strcmp(current->name, name) == 0) {
+                return current->value;
+            }
+            current = current->next;
         }
-        current = current->next;
     }
 
     fprintf(stderr, "Error: Memory block for '%s' not found\n", name);
     return NULL; // Return NULL if not found
 }
+

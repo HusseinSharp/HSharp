@@ -22,6 +22,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage: %s <filename.hussein>\n", argv[0]);
         return 1;
     }
+    extern char** included_files;
+    extern int included_files_count;
 
     // Ensure that the file has a .hussein extension
     const char *filename = argv[1];
@@ -42,6 +44,11 @@ int main(int argc, char *argv[]) {
     yyparse();
 
     fclose(file);
+
+     for (int i = 0; i < included_files_count; ++i) {
+        free(included_files[i]);
+    }
+    free(included_files);
     //garbage_collect();
     
     return 0;
