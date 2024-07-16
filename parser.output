@@ -1,0 +1,1654 @@
+Terminals unused in grammar
+
+   LSB
+   RSB
+   COMMA
+
+
+State 44 conflicts: 2 reduce/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: start_stmt
+
+    2 start_stmt: libprogstart mainprog
+    3           | mainprog
+    4           | libprogstart
+    5           | /* empty */
+
+    6 $@1: /* empty */
+
+    7 $@2: /* empty */
+
+    8 mainprog: import_list_opt MAIN LCB $@1 statement_list RCB $@2 SEMICOLON
+
+    9 import_list_opt: import_list
+   10                | /* empty */
+
+   11 import_list: import_list IMPORT_stmt
+   12            | IMPORT_stmt
+
+   13 IMPORT_stmt: IMPORT FILENAME
+
+   14 $@3: /* empty */
+
+   15 $@4: /* empty */
+
+   16 libprogstart: LIBDEF LCB $@3 statement_list RCB $@4 SEMICOLON
+
+   17 statement_list: /* empty */
+   18               | statement_list statement SEMICOLON
+
+   19 conditional_statement_list: /* empty */
+   20                           | conditional_statement_list conditional_statement SEMICOLON
+
+   21 statement: var_declaration
+   22          | assignment
+   23          | display
+   24          | if_statement
+
+   25 conditional_statement: conditional_var_declaration
+   26                      | conditional_assignment
+   27                      | conditional_display
+   28                      | conditional_if_statement
+
+   29 var_declaration: VAR IDENT EQUALS expr
+   30                | VAR IDENT EQUALS sexpr
+
+   31 conditional_var_declaration: VAR IDENT EQUALS expr
+   32                            | VAR IDENT EQUALS sexpr
+
+   33 assignment: IDENT EQUALS expr
+   34           | IDENT EQUALS sexpr
+
+   35 conditional_assignment: IDENT EQUALS expr
+   36                       | IDENT EQUALS sexpr
+
+   37 display: CALL IDENT
+
+   38 conditional_display: CALL IDENT
+
+   39 $@5: /* empty */
+
+   40 if_statement: IF LPAR expr RPAR $@5 LCB conditional_statement_list RCB elseif_statements else_statement
+
+   41 elseif_statements: /* empty */
+
+   42 $@6: /* empty */
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR $@6 LCB conditional_statement_list RCB
+
+   44 else_statement: /* empty */
+
+   45 $@7: /* empty */
+
+   46 else_statement: ELSE $@7 LCB conditional_statement_list RCB
+
+   47 $@8: /* empty */
+
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB conditional_statement_list RCB elseif_statements else_statement
+
+   49 expr: NUMBER
+   50     | FLOAT_NUMBER
+   51     | IDENT
+   52     | expr PLUS expr
+   53     | expr MINUS expr
+   54     | expr MULTIPLY expr
+   55     | expr DIVIDE expr
+   56     | expr EQ expr
+   57     | expr NEQ expr
+   58     | expr LT expr
+   59     | expr GT expr
+   60     | expr LEQ expr
+   61     | expr GEQ expr
+   62     | LPAR expr RPAR
+
+   63 sexpr: STRING_LITERAL
+   64      | IDENT
+   65      | sexpr PLUS sexpr
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+NUMBER (258) 49
+FLOAT_NUMBER (259) 50
+STRING_LITERAL (260) 63
+EQUALS (261) 29 30 31 32 33 34 35 36
+SEMICOLON (262) 8 16 18 20
+PLUS (263) 52 65
+MINUS (264) 53
+MULTIPLY (265) 54
+DIVIDE (266) 55
+LPAR (267) 40 43 48 62
+RPAR (268) 40 43 48 62
+LCB (269) 8 16 40 43 46 48
+RCB (270) 8 16 40 43 46 48
+MAIN (271) 8
+LIBDEF (272) 16
+CALL (273) 37 38
+VAR (274) 29 30 31 32
+FILENAME (275) 13
+IDENT (276) 29 30 31 32 33 34 35 36 37 38 51 64
+LSB (277)
+RSB (278)
+COMMA (279)
+IMPORT (280) 13
+IF (281) 40 48
+ELSE (282) 46
+EQ (283) 56
+NEQ (284) 57
+LT (285) 58
+GT (286) 59
+LEQ (287) 60
+GEQ (288) 61
+ELSEIF (289) 43
+
+
+Nonterminals, with rules where they appear
+
+$accept (35)
+    on left: 0
+program (36)
+    on left: 1, on right: 0
+start_stmt (37)
+    on left: 2 3 4 5, on right: 1
+mainprog (38)
+    on left: 8, on right: 2 3
+$@1 (39)
+    on left: 6, on right: 8
+$@2 (40)
+    on left: 7, on right: 8
+import_list_opt (41)
+    on left: 9 10, on right: 8
+import_list (42)
+    on left: 11 12, on right: 9 11
+IMPORT_stmt (43)
+    on left: 13, on right: 11 12
+libprogstart (44)
+    on left: 16, on right: 2 4
+$@3 (45)
+    on left: 14, on right: 16
+$@4 (46)
+    on left: 15, on right: 16
+statement_list (47)
+    on left: 17 18, on right: 8 16 18
+conditional_statement_list (48)
+    on left: 19 20, on right: 20 40 43 46 48
+statement (49)
+    on left: 21 22 23 24, on right: 18
+conditional_statement (50)
+    on left: 25 26 27 28, on right: 20
+var_declaration (51)
+    on left: 29 30, on right: 21
+conditional_var_declaration (52)
+    on left: 31 32, on right: 25
+assignment (53)
+    on left: 33 34, on right: 22
+conditional_assignment (54)
+    on left: 35 36, on right: 26
+display (55)
+    on left: 37, on right: 23
+conditional_display (56)
+    on left: 38, on right: 27
+if_statement (57)
+    on left: 40, on right: 24
+$@5 (58)
+    on left: 39, on right: 40
+elseif_statements (59)
+    on left: 41 43, on right: 40 43 48
+$@6 (60)
+    on left: 42, on right: 43
+else_statement (61)
+    on left: 44 46, on right: 40 48
+$@7 (62)
+    on left: 45, on right: 46
+conditional_if_statement (63)
+    on left: 48, on right: 28
+$@8 (64)
+    on left: 47, on right: 48
+expr (65)
+    on left: 49 50 51 52 53 54 55 56 57 58 59 60 61 62, on right: 29
+    31 33 35 40 43 48 52 53 54 55 56 57 58 59 60 61 62
+sexpr (66)
+    on left: 63 64 65, on right: 30 32 34 36 65
+
+
+State 0
+
+    0 $accept: . program $end
+
+    LIBDEF  shift, and go to state 1
+    IMPORT  shift, and go to state 2
+
+    MAIN      reduce using rule 10 (import_list_opt)
+    $default  reduce using rule 5 (start_stmt)
+
+    program          go to state 3
+    start_stmt       go to state 4
+    mainprog         go to state 5
+    import_list_opt  go to state 6
+    import_list      go to state 7
+    IMPORT_stmt      go to state 8
+    libprogstart     go to state 9
+
+
+State 1
+
+   16 libprogstart: LIBDEF . LCB $@3 statement_list RCB $@4 SEMICOLON
+
+    LCB  shift, and go to state 10
+
+
+State 2
+
+   13 IMPORT_stmt: IMPORT . FILENAME
+
+    FILENAME  shift, and go to state 11
+
+
+State 3
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 12
+
+
+State 4
+
+    1 program: start_stmt .
+
+    $default  reduce using rule 1 (program)
+
+
+State 5
+
+    3 start_stmt: mainprog .
+
+    $default  reduce using rule 3 (start_stmt)
+
+
+State 6
+
+    8 mainprog: import_list_opt . MAIN LCB $@1 statement_list RCB $@2 SEMICOLON
+
+    MAIN  shift, and go to state 13
+
+
+State 7
+
+    9 import_list_opt: import_list .
+   11 import_list: import_list . IMPORT_stmt
+
+    IMPORT  shift, and go to state 2
+
+    $default  reduce using rule 9 (import_list_opt)
+
+    IMPORT_stmt  go to state 14
+
+
+State 8
+
+   12 import_list: IMPORT_stmt .
+
+    $default  reduce using rule 12 (import_list)
+
+
+State 9
+
+    2 start_stmt: libprogstart . mainprog
+    4           | libprogstart .
+
+    IMPORT  shift, and go to state 2
+
+    MAIN      reduce using rule 10 (import_list_opt)
+    $default  reduce using rule 4 (start_stmt)
+
+    mainprog         go to state 15
+    import_list_opt  go to state 6
+    import_list      go to state 7
+    IMPORT_stmt      go to state 8
+
+
+State 10
+
+   16 libprogstart: LIBDEF LCB . $@3 statement_list RCB $@4 SEMICOLON
+
+    $default  reduce using rule 14 ($@3)
+
+    $@3  go to state 16
+
+
+State 11
+
+   13 IMPORT_stmt: IMPORT FILENAME .
+
+    $default  reduce using rule 13 (IMPORT_stmt)
+
+
+State 12
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 13
+
+    8 mainprog: import_list_opt MAIN . LCB $@1 statement_list RCB $@2 SEMICOLON
+
+    LCB  shift, and go to state 17
+
+
+State 14
+
+   11 import_list: import_list IMPORT_stmt .
+
+    $default  reduce using rule 11 (import_list)
+
+
+State 15
+
+    2 start_stmt: libprogstart mainprog .
+
+    $default  reduce using rule 2 (start_stmt)
+
+
+State 16
+
+   16 libprogstart: LIBDEF LCB $@3 . statement_list RCB $@4 SEMICOLON
+
+    $default  reduce using rule 17 (statement_list)
+
+    statement_list  go to state 18
+
+
+State 17
+
+    8 mainprog: import_list_opt MAIN LCB . $@1 statement_list RCB $@2 SEMICOLON
+
+    $default  reduce using rule 6 ($@1)
+
+    $@1  go to state 19
+
+
+State 18
+
+   16 libprogstart: LIBDEF LCB $@3 statement_list . RCB $@4 SEMICOLON
+   18 statement_list: statement_list . statement SEMICOLON
+
+    RCB    shift, and go to state 20
+    CALL   shift, and go to state 21
+    VAR    shift, and go to state 22
+    IDENT  shift, and go to state 23
+    IF     shift, and go to state 24
+
+    statement        go to state 25
+    var_declaration  go to state 26
+    assignment       go to state 27
+    display          go to state 28
+    if_statement     go to state 29
+
+
+State 19
+
+    8 mainprog: import_list_opt MAIN LCB $@1 . statement_list RCB $@2 SEMICOLON
+
+    $default  reduce using rule 17 (statement_list)
+
+    statement_list  go to state 30
+
+
+State 20
+
+   16 libprogstart: LIBDEF LCB $@3 statement_list RCB . $@4 SEMICOLON
+
+    $default  reduce using rule 15 ($@4)
+
+    $@4  go to state 31
+
+
+State 21
+
+   37 display: CALL . IDENT
+
+    IDENT  shift, and go to state 32
+
+
+State 22
+
+   29 var_declaration: VAR . IDENT EQUALS expr
+   30                | VAR . IDENT EQUALS sexpr
+
+    IDENT  shift, and go to state 33
+
+
+State 23
+
+   33 assignment: IDENT . EQUALS expr
+   34           | IDENT . EQUALS sexpr
+
+    EQUALS  shift, and go to state 34
+
+
+State 24
+
+   40 if_statement: IF . LPAR expr RPAR $@5 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    LPAR  shift, and go to state 35
+
+
+State 25
+
+   18 statement_list: statement_list statement . SEMICOLON
+
+    SEMICOLON  shift, and go to state 36
+
+
+State 26
+
+   21 statement: var_declaration .
+
+    $default  reduce using rule 21 (statement)
+
+
+State 27
+
+   22 statement: assignment .
+
+    $default  reduce using rule 22 (statement)
+
+
+State 28
+
+   23 statement: display .
+
+    $default  reduce using rule 23 (statement)
+
+
+State 29
+
+   24 statement: if_statement .
+
+    $default  reduce using rule 24 (statement)
+
+
+State 30
+
+    8 mainprog: import_list_opt MAIN LCB $@1 statement_list . RCB $@2 SEMICOLON
+   18 statement_list: statement_list . statement SEMICOLON
+
+    RCB    shift, and go to state 37
+    CALL   shift, and go to state 21
+    VAR    shift, and go to state 22
+    IDENT  shift, and go to state 23
+    IF     shift, and go to state 24
+
+    statement        go to state 25
+    var_declaration  go to state 26
+    assignment       go to state 27
+    display          go to state 28
+    if_statement     go to state 29
+
+
+State 31
+
+   16 libprogstart: LIBDEF LCB $@3 statement_list RCB $@4 . SEMICOLON
+
+    SEMICOLON  shift, and go to state 38
+
+
+State 32
+
+   37 display: CALL IDENT .
+
+    $default  reduce using rule 37 (display)
+
+
+State 33
+
+   29 var_declaration: VAR IDENT . EQUALS expr
+   30                | VAR IDENT . EQUALS sexpr
+
+    EQUALS  shift, and go to state 39
+
+
+State 34
+
+   33 assignment: IDENT EQUALS . expr
+   34           | IDENT EQUALS . sexpr
+
+    NUMBER          shift, and go to state 40
+    FLOAT_NUMBER    shift, and go to state 41
+    STRING_LITERAL  shift, and go to state 42
+    LPAR            shift, and go to state 43
+    IDENT           shift, and go to state 44
+
+    expr   go to state 45
+    sexpr  go to state 46
+
+
+State 35
+
+   40 if_statement: IF LPAR . expr RPAR $@5 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 48
+
+
+State 36
+
+   18 statement_list: statement_list statement SEMICOLON .
+
+    $default  reduce using rule 18 (statement_list)
+
+
+State 37
+
+    8 mainprog: import_list_opt MAIN LCB $@1 statement_list RCB . $@2 SEMICOLON
+
+    $default  reduce using rule 7 ($@2)
+
+    $@2  go to state 49
+
+
+State 38
+
+   16 libprogstart: LIBDEF LCB $@3 statement_list RCB $@4 SEMICOLON .
+
+    $default  reduce using rule 16 (libprogstart)
+
+
+State 39
+
+   29 var_declaration: VAR IDENT EQUALS . expr
+   30                | VAR IDENT EQUALS . sexpr
+
+    NUMBER          shift, and go to state 40
+    FLOAT_NUMBER    shift, and go to state 41
+    STRING_LITERAL  shift, and go to state 42
+    LPAR            shift, and go to state 43
+    IDENT           shift, and go to state 44
+
+    expr   go to state 50
+    sexpr  go to state 51
+
+
+State 40
+
+   49 expr: NUMBER .
+
+    $default  reduce using rule 49 (expr)
+
+
+State 41
+
+   50 expr: FLOAT_NUMBER .
+
+    $default  reduce using rule 50 (expr)
+
+
+State 42
+
+   63 sexpr: STRING_LITERAL .
+
+    $default  reduce using rule 63 (sexpr)
+
+
+State 43
+
+   62 expr: LPAR . expr RPAR
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 52
+
+
+State 44
+
+   51 expr: IDENT .
+   64 sexpr: IDENT .
+
+    SEMICOLON  reduce using rule 51 (expr)
+    SEMICOLON  [reduce using rule 64 (sexpr)]
+    PLUS       reduce using rule 51 (expr)
+    PLUS       [reduce using rule 64 (sexpr)]
+    $default   reduce using rule 51 (expr)
+
+
+State 45
+
+   33 assignment: IDENT EQUALS expr .
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 33 (assignment)
+
+
+State 46
+
+   34 assignment: IDENT EQUALS sexpr .
+   65 sexpr: sexpr . PLUS sexpr
+
+    PLUS  shift, and go to state 63
+
+    $default  reduce using rule 34 (assignment)
+
+
+State 47
+
+   51 expr: IDENT .
+
+    $default  reduce using rule 51 (expr)
+
+
+State 48
+
+   40 if_statement: IF LPAR expr . RPAR $@5 LCB conditional_statement_list RCB elseif_statements else_statement
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    RPAR      shift, and go to state 64
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+
+State 49
+
+    8 mainprog: import_list_opt MAIN LCB $@1 statement_list RCB $@2 . SEMICOLON
+
+    SEMICOLON  shift, and go to state 65
+
+
+State 50
+
+   29 var_declaration: VAR IDENT EQUALS expr .
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 29 (var_declaration)
+
+
+State 51
+
+   30 var_declaration: VAR IDENT EQUALS sexpr .
+   65 sexpr: sexpr . PLUS sexpr
+
+    PLUS  shift, and go to state 63
+
+    $default  reduce using rule 30 (var_declaration)
+
+
+State 52
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+   62     | LPAR expr . RPAR
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    RPAR      shift, and go to state 66
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+
+State 53
+
+   52 expr: expr PLUS . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 67
+
+
+State 54
+
+   53 expr: expr MINUS . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 68
+
+
+State 55
+
+   54 expr: expr MULTIPLY . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 69
+
+
+State 56
+
+   55 expr: expr DIVIDE . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 70
+
+
+State 57
+
+   56 expr: expr EQ . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 71
+
+
+State 58
+
+   57 expr: expr NEQ . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 72
+
+
+State 59
+
+   58 expr: expr LT . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 73
+
+
+State 60
+
+   59 expr: expr GT . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 74
+
+
+State 61
+
+   60 expr: expr LEQ . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 75
+
+
+State 62
+
+   61 expr: expr GEQ . expr
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 76
+
+
+State 63
+
+   65 sexpr: sexpr PLUS . sexpr
+
+    STRING_LITERAL  shift, and go to state 42
+    IDENT           shift, and go to state 77
+
+    sexpr  go to state 78
+
+
+State 64
+
+   40 if_statement: IF LPAR expr RPAR . $@5 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    $default  reduce using rule 39 ($@5)
+
+    $@5  go to state 79
+
+
+State 65
+
+    8 mainprog: import_list_opt MAIN LCB $@1 statement_list RCB $@2 SEMICOLON .
+
+    $default  reduce using rule 8 (mainprog)
+
+
+State 66
+
+   62 expr: LPAR expr RPAR .
+
+    $default  reduce using rule 62 (expr)
+
+
+State 67
+
+   52 expr: expr . PLUS expr
+   52     | expr PLUS expr .
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 52 (expr)
+
+
+State 68
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   53     | expr MINUS expr .
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 53 (expr)
+
+
+State 69
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   54     | expr MULTIPLY expr .
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    EQ   shift, and go to state 57
+    NEQ  shift, and go to state 58
+    LT   shift, and go to state 59
+    GT   shift, and go to state 60
+    LEQ  shift, and go to state 61
+    GEQ  shift, and go to state 62
+
+    $default  reduce using rule 54 (expr)
+
+
+State 70
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   55     | expr DIVIDE expr .
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    EQ   shift, and go to state 57
+    NEQ  shift, and go to state 58
+    LT   shift, and go to state 59
+    GT   shift, and go to state 60
+    LEQ  shift, and go to state 61
+    GEQ  shift, and go to state 62
+
+    $default  reduce using rule 55 (expr)
+
+
+State 71
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   56     | expr EQ expr .
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    $default  reduce using rule 56 (expr)
+
+
+State 72
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   57     | expr NEQ expr .
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    $default  reduce using rule 57 (expr)
+
+
+State 73
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   58     | expr LT expr .
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    $default  reduce using rule 58 (expr)
+
+
+State 74
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   59     | expr GT expr .
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    $default  reduce using rule 59 (expr)
+
+
+State 75
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   60     | expr LEQ expr .
+   61     | expr . GEQ expr
+
+    $default  reduce using rule 60 (expr)
+
+
+State 76
+
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+   61     | expr GEQ expr .
+
+    $default  reduce using rule 61 (expr)
+
+
+State 77
+
+   64 sexpr: IDENT .
+
+    $default  reduce using rule 64 (sexpr)
+
+
+State 78
+
+   65 sexpr: sexpr . PLUS sexpr
+   65      | sexpr PLUS sexpr .
+
+    $default  reduce using rule 65 (sexpr)
+
+
+State 79
+
+   40 if_statement: IF LPAR expr RPAR $@5 . LCB conditional_statement_list RCB elseif_statements else_statement
+
+    LCB  shift, and go to state 80
+
+
+State 80
+
+   40 if_statement: IF LPAR expr RPAR $@5 LCB . conditional_statement_list RCB elseif_statements else_statement
+
+    $default  reduce using rule 19 (conditional_statement_list)
+
+    conditional_statement_list  go to state 81
+
+
+State 81
+
+   20 conditional_statement_list: conditional_statement_list . conditional_statement SEMICOLON
+   40 if_statement: IF LPAR expr RPAR $@5 LCB conditional_statement_list . RCB elseif_statements else_statement
+
+    RCB    shift, and go to state 82
+    CALL   shift, and go to state 83
+    VAR    shift, and go to state 84
+    IDENT  shift, and go to state 85
+    IF     shift, and go to state 86
+
+    conditional_statement        go to state 87
+    conditional_var_declaration  go to state 88
+    conditional_assignment       go to state 89
+    conditional_display          go to state 90
+    conditional_if_statement     go to state 91
+
+
+State 82
+
+   40 if_statement: IF LPAR expr RPAR $@5 LCB conditional_statement_list RCB . elseif_statements else_statement
+
+    $default  reduce using rule 41 (elseif_statements)
+
+    elseif_statements  go to state 92
+
+
+State 83
+
+   38 conditional_display: CALL . IDENT
+
+    IDENT  shift, and go to state 93
+
+
+State 84
+
+   31 conditional_var_declaration: VAR . IDENT EQUALS expr
+   32                            | VAR . IDENT EQUALS sexpr
+
+    IDENT  shift, and go to state 94
+
+
+State 85
+
+   35 conditional_assignment: IDENT . EQUALS expr
+   36                       | IDENT . EQUALS sexpr
+
+    EQUALS  shift, and go to state 95
+
+
+State 86
+
+   48 conditional_if_statement: IF . LPAR expr RPAR $@8 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    LPAR  shift, and go to state 96
+
+
+State 87
+
+   20 conditional_statement_list: conditional_statement_list conditional_statement . SEMICOLON
+
+    SEMICOLON  shift, and go to state 97
+
+
+State 88
+
+   25 conditional_statement: conditional_var_declaration .
+
+    $default  reduce using rule 25 (conditional_statement)
+
+
+State 89
+
+   26 conditional_statement: conditional_assignment .
+
+    $default  reduce using rule 26 (conditional_statement)
+
+
+State 90
+
+   27 conditional_statement: conditional_display .
+
+    $default  reduce using rule 27 (conditional_statement)
+
+
+State 91
+
+   28 conditional_statement: conditional_if_statement .
+
+    $default  reduce using rule 28 (conditional_statement)
+
+
+State 92
+
+   40 if_statement: IF LPAR expr RPAR $@5 LCB conditional_statement_list RCB elseif_statements . else_statement
+   43 elseif_statements: elseif_statements . ELSEIF LPAR expr RPAR $@6 LCB conditional_statement_list RCB
+
+    ELSE    shift, and go to state 98
+    ELSEIF  shift, and go to state 99
+
+    $default  reduce using rule 44 (else_statement)
+
+    else_statement  go to state 100
+
+
+State 93
+
+   38 conditional_display: CALL IDENT .
+
+    $default  reduce using rule 38 (conditional_display)
+
+
+State 94
+
+   31 conditional_var_declaration: VAR IDENT . EQUALS expr
+   32                            | VAR IDENT . EQUALS sexpr
+
+    EQUALS  shift, and go to state 101
+
+
+State 95
+
+   35 conditional_assignment: IDENT EQUALS . expr
+   36                       | IDENT EQUALS . sexpr
+
+    NUMBER          shift, and go to state 40
+    FLOAT_NUMBER    shift, and go to state 41
+    STRING_LITERAL  shift, and go to state 42
+    LPAR            shift, and go to state 43
+    IDENT           shift, and go to state 44
+
+    expr   go to state 102
+    sexpr  go to state 103
+
+
+State 96
+
+   48 conditional_if_statement: IF LPAR . expr RPAR $@8 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 104
+
+
+State 97
+
+   20 conditional_statement_list: conditional_statement_list conditional_statement SEMICOLON .
+
+    $default  reduce using rule 20 (conditional_statement_list)
+
+
+State 98
+
+   46 else_statement: ELSE . $@7 LCB conditional_statement_list RCB
+
+    $default  reduce using rule 45 ($@7)
+
+    $@7  go to state 105
+
+
+State 99
+
+   43 elseif_statements: elseif_statements ELSEIF . LPAR expr RPAR $@6 LCB conditional_statement_list RCB
+
+    LPAR  shift, and go to state 106
+
+
+State 100
+
+   40 if_statement: IF LPAR expr RPAR $@5 LCB conditional_statement_list RCB elseif_statements else_statement .
+
+    $default  reduce using rule 40 (if_statement)
+
+
+State 101
+
+   31 conditional_var_declaration: VAR IDENT EQUALS . expr
+   32                            | VAR IDENT EQUALS . sexpr
+
+    NUMBER          shift, and go to state 40
+    FLOAT_NUMBER    shift, and go to state 41
+    STRING_LITERAL  shift, and go to state 42
+    LPAR            shift, and go to state 43
+    IDENT           shift, and go to state 44
+
+    expr   go to state 107
+    sexpr  go to state 108
+
+
+State 102
+
+   35 conditional_assignment: IDENT EQUALS expr .
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 35 (conditional_assignment)
+
+
+State 103
+
+   36 conditional_assignment: IDENT EQUALS sexpr .
+   65 sexpr: sexpr . PLUS sexpr
+
+    PLUS  shift, and go to state 63
+
+    $default  reduce using rule 36 (conditional_assignment)
+
+
+State 104
+
+   48 conditional_if_statement: IF LPAR expr . RPAR $@8 LCB conditional_statement_list RCB elseif_statements else_statement
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    RPAR      shift, and go to state 109
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+
+State 105
+
+   46 else_statement: ELSE $@7 . LCB conditional_statement_list RCB
+
+    LCB  shift, and go to state 110
+
+
+State 106
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR . expr RPAR $@6 LCB conditional_statement_list RCB
+
+    NUMBER        shift, and go to state 40
+    FLOAT_NUMBER  shift, and go to state 41
+    LPAR          shift, and go to state 43
+    IDENT         shift, and go to state 47
+
+    expr  go to state 111
+
+
+State 107
+
+   31 conditional_var_declaration: VAR IDENT EQUALS expr .
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+    $default  reduce using rule 31 (conditional_var_declaration)
+
+
+State 108
+
+   32 conditional_var_declaration: VAR IDENT EQUALS sexpr .
+   65 sexpr: sexpr . PLUS sexpr
+
+    PLUS  shift, and go to state 63
+
+    $default  reduce using rule 32 (conditional_var_declaration)
+
+
+State 109
+
+   48 conditional_if_statement: IF LPAR expr RPAR . $@8 LCB conditional_statement_list RCB elseif_statements else_statement
+
+    $default  reduce using rule 47 ($@8)
+
+    $@8  go to state 112
+
+
+State 110
+
+   46 else_statement: ELSE $@7 LCB . conditional_statement_list RCB
+
+    $default  reduce using rule 19 (conditional_statement_list)
+
+    conditional_statement_list  go to state 113
+
+
+State 111
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr . RPAR $@6 LCB conditional_statement_list RCB
+   52 expr: expr . PLUS expr
+   53     | expr . MINUS expr
+   54     | expr . MULTIPLY expr
+   55     | expr . DIVIDE expr
+   56     | expr . EQ expr
+   57     | expr . NEQ expr
+   58     | expr . LT expr
+   59     | expr . GT expr
+   60     | expr . LEQ expr
+   61     | expr . GEQ expr
+
+    PLUS      shift, and go to state 53
+    MINUS     shift, and go to state 54
+    MULTIPLY  shift, and go to state 55
+    DIVIDE    shift, and go to state 56
+    RPAR      shift, and go to state 114
+    EQ        shift, and go to state 57
+    NEQ       shift, and go to state 58
+    LT        shift, and go to state 59
+    GT        shift, and go to state 60
+    LEQ       shift, and go to state 61
+    GEQ       shift, and go to state 62
+
+
+State 112
+
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 . LCB conditional_statement_list RCB elseif_statements else_statement
+
+    LCB  shift, and go to state 115
+
+
+State 113
+
+   20 conditional_statement_list: conditional_statement_list . conditional_statement SEMICOLON
+   46 else_statement: ELSE $@7 LCB conditional_statement_list . RCB
+
+    RCB    shift, and go to state 116
+    CALL   shift, and go to state 83
+    VAR    shift, and go to state 84
+    IDENT  shift, and go to state 85
+    IF     shift, and go to state 86
+
+    conditional_statement        go to state 87
+    conditional_var_declaration  go to state 88
+    conditional_assignment       go to state 89
+    conditional_display          go to state 90
+    conditional_if_statement     go to state 91
+
+
+State 114
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR . $@6 LCB conditional_statement_list RCB
+
+    $default  reduce using rule 42 ($@6)
+
+    $@6  go to state 117
+
+
+State 115
+
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB . conditional_statement_list RCB elseif_statements else_statement
+
+    $default  reduce using rule 19 (conditional_statement_list)
+
+    conditional_statement_list  go to state 118
+
+
+State 116
+
+   46 else_statement: ELSE $@7 LCB conditional_statement_list RCB .
+
+    $default  reduce using rule 46 (else_statement)
+
+
+State 117
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR $@6 . LCB conditional_statement_list RCB
+
+    LCB  shift, and go to state 119
+
+
+State 118
+
+   20 conditional_statement_list: conditional_statement_list . conditional_statement SEMICOLON
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB conditional_statement_list . RCB elseif_statements else_statement
+
+    RCB    shift, and go to state 120
+    CALL   shift, and go to state 83
+    VAR    shift, and go to state 84
+    IDENT  shift, and go to state 85
+    IF     shift, and go to state 86
+
+    conditional_statement        go to state 87
+    conditional_var_declaration  go to state 88
+    conditional_assignment       go to state 89
+    conditional_display          go to state 90
+    conditional_if_statement     go to state 91
+
+
+State 119
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR $@6 LCB . conditional_statement_list RCB
+
+    $default  reduce using rule 19 (conditional_statement_list)
+
+    conditional_statement_list  go to state 121
+
+
+State 120
+
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB conditional_statement_list RCB . elseif_statements else_statement
+
+    $default  reduce using rule 41 (elseif_statements)
+
+    elseif_statements  go to state 122
+
+
+State 121
+
+   20 conditional_statement_list: conditional_statement_list . conditional_statement SEMICOLON
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR $@6 LCB conditional_statement_list . RCB
+
+    RCB    shift, and go to state 123
+    CALL   shift, and go to state 83
+    VAR    shift, and go to state 84
+    IDENT  shift, and go to state 85
+    IF     shift, and go to state 86
+
+    conditional_statement        go to state 87
+    conditional_var_declaration  go to state 88
+    conditional_assignment       go to state 89
+    conditional_display          go to state 90
+    conditional_if_statement     go to state 91
+
+
+State 122
+
+   43 elseif_statements: elseif_statements . ELSEIF LPAR expr RPAR $@6 LCB conditional_statement_list RCB
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB conditional_statement_list RCB elseif_statements . else_statement
+
+    ELSE    shift, and go to state 98
+    ELSEIF  shift, and go to state 99
+
+    $default  reduce using rule 44 (else_statement)
+
+    else_statement  go to state 124
+
+
+State 123
+
+   43 elseif_statements: elseif_statements ELSEIF LPAR expr RPAR $@6 LCB conditional_statement_list RCB .
+
+    $default  reduce using rule 43 (elseif_statements)
+
+
+State 124
+
+   48 conditional_if_statement: IF LPAR expr RPAR $@8 LCB conditional_statement_list RCB elseif_statements else_statement .
+
+    $default  reduce using rule 48 (conditional_if_statement)

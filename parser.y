@@ -1,26 +1,34 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h> 
-#include "hashtable.h"
-#include "garbagecollection.h"
-#include "lexer.h"
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <math.h>
+    #include "hashtable.h"
+    #include "garbagecollection.h"
+    #include "lexer.h"
 
-int array_size;
-int twod_array_size_row;
-int twod_array_size_col;
+    int array_size;
+    int twod_array_size_row;
+    int twod_array_size_col;
 
-extern int yylineno;
-extern char current_token_text[];
+    extern int yylineno;
+    extern char current_token_text[];
 
-void yyerror(const char *s) {
-    fprintf(stderr, "Parse error at line %d: %s\n", yylineno, s);
-    fprintf(stderr, "Current token: %s\n", current_token_text);
-}
+    void yyerror(const char *s) {
+        fprintf(stderr, "Parse error at line %d: %s\n", yylineno, s);
+        fprintf(stderr, "Current token: %s\n", current_token_text);
+    }
 
-void enter_scope();
-void exit_scope();
+    void enter_scope();
+    void exit_scope();
+
+    int evaluate_condition(int condition) {
+        return condition;
+    }
+
+    int condvalue;
+    int temp;
+    int condition_met;
 
 %}
 
@@ -47,30 +55,41 @@ void exit_scope();
 %token <str> MINUS
 %token <str> MULTIPLY
 %token <str> DIVIDE
-%token LPAR
-%token RPAR
+%token <str> LPAR
+%token <str> RPAR
 %token <str> LCB
 %token <str> RCB
 %token <str> MAIN
 %token <str> LIBDEF
-%token FREEMEM
 %token <str> CALL
-%token VAR
-%token FILENAME
+%token <str> VAR
+%token <str> FILENAME
 %token <str> IDENT
 %token <str> LSB
 %token <str> RSB
 %token <str> COMMA
-%token IMPORT
+%token <str> IMPORT
+%token <str> IF
+%token <str> ELSE
+%token <str> EQ
+%token <str> NEQ
+%token <str> LT
+%token <str> GT
+%token <str> LEQ
+%token <str> GEQ
+%token <str> ELSEIF
 
 %type <exprval> expr
 %type <str> sexpr
-%type <str> var_declaration assignment display 
-%type <str> statement_list
-%type <str> libprogstart
+%type <str> var_declaration assignment display
+%type <str> statement statement_list
+%type <str> conditional_statement conditional_statement_list
+%type <str> libprogstart if_statement elseif_statements else_statement conditional_if_statement
+%type <str> conditional_display conditional_var_declaration conditional_assignment
 
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
+%left EQ NEQ LT GT LEQ GEQ
 
 %start program
 
@@ -100,21 +119,27 @@ IMPORT_stmt: IMPORT FILENAME ;
 
 libprogstart: LIBDEF LCB { enter_scope(); } statement_list RCB { exit_scope(); } SEMICOLON;
 
-statement_list: /* empty */
-              | statement_list statement SEMICOLON
+statement_list: /* empty */ { $$ = ""; }
+              | statement_list statement SEMICOLON { $$ = $1; }
               ;
 
-statement: var_declaration
-         | assignment
-         | display
-         | freememory
-         | block
+conditional_statement_list: /* empty */ { $$ = ""; }
+                          | conditional_statement_list conditional_statement SEMICOLON { $$ = $1; }
+                          ;
+
+statement: var_declaration { $$ = $1; }
+         | assignment { $$ = $1; }
+         | display { $$ = $1; }
+         | if_statement { $$ = ""; }
          ;
 
-block: LCB { enter_scope(); } statement_list RCB { exit_scope(); }
-     ;
+conditional_statement: conditional_var_declaration { $$ = $1; }
+                     | conditional_assignment { $$ = $1; }
+                     | conditional_display { $$ = $1; }
+                     | conditional_if_statement { $$ = ""; }
+                     ;
 
-var_declaration:  VAR IDENT EQUALS expr { 
+var_declaration: VAR IDENT EQUALS expr { 
                    if ($4.type == TYPE_INT) {
                        insert_variable($2);
                        update_variable($2, $4.value.intValue);
@@ -125,32 +150,172 @@ var_declaration:  VAR IDENT EQUALS expr {
                        insert_string_variable($2);
                        update_string_variable($2, $4.value.strValue);
                    }
+                   $$ = $2;
                  }
-               | VAR IDENT EQUALS sexpr { insert_string_variable($2); update_string_variable($2, $4); }
+               | VAR IDENT EQUALS sexpr { insert_string_variable($2); update_string_variable($2, $4); $$ = $2; }
                ;
 
+conditional_var_declaration: VAR IDENT EQUALS expr { 
+                               if (evaluate_condition(condvalue)) {
+                                   if ($4.type == TYPE_INT) {
+                                       insert_variable($2);
+                                       update_variable($2, $4.value.intValue);
+                                   } else if ($4.type == TYPE_FLOAT) {
+                                       insert_float_variable($2);
+                                       update_float_variable($2, $4.value.floatValue);
+                                   } else {
+                                       insert_string_variable($2);
+                                       update_string_variable($2, $4.value.strValue);
+                                   }
+                               }
+                               $$ = $2;
+                             }
+                           | VAR IDENT EQUALS sexpr { 
+                               if (evaluate_condition(condvalue)) {  // Assuming string literals are always true
+                                   insert_string_variable($2);
+                                   update_string_variable($2, $4);
+                               }
+                               $$ = $2;
+                             }
+                           ;
+
 assignment: IDENT EQUALS expr { 
-                if ($3.type == TYPE_INT) 
-                    update_variable($1, $3.value.intValue); 
-                else if ($3.type == TYPE_FLOAT) 
-                    update_float_variable($1, $3.value.floatValue);
-                else 
-                    update_string_variable($1, $3.value.strValue); 
+                int old_type = get_variable_type($1);
+                if (old_type == -1) {
+                    if ($3.type == TYPE_INT) {
+                        insert_variable($1);
+                        update_variable($1, $3.value.intValue);
+                    } else if ($3.type == TYPE_FLOAT) {
+                        insert_float_variable($1);
+                        update_float_variable($1, $3.value.floatValue);
+                    } else {
+                        insert_string_variable($1);
+                        update_string_variable($1, $3.value.strValue);
+                    }
+                } else {
+                    if ($3.type == TYPE_INT && old_type != TYPE_INT) {
+                        delete_variable($1);
+                        insert_variable($1);
+                        update_variable($1, $3.value.intValue);
+                    } else if ($3.type == TYPE_FLOAT && old_type != TYPE_FLOAT) {
+                        delete_variable($1);
+                        insert_float_variable($1);
+                        update_float_variable($1, $3.value.floatValue);
+                    } else if ($3.type == TYPE_STRING && old_type != TYPE_STRING) {
+                        delete_variable($1);
+                        insert_string_variable($1);
+                        update_string_variable($1, $3.value.strValue);
+                    } else {
+                        if ($3.type == TYPE_INT) 
+                            update_variable($1, $3.value.intValue); 
+                        else if ($3.type == TYPE_FLOAT) 
+                            update_float_variable($1, $3.value.floatValue);
+                        else 
+                            update_string_variable($1, $3.value.strValue);
+                    }
+                }
+                $$ = $1;
             }
-          | IDENT EQUALS sexpr { update_string_variable($1, $3); }
+          | IDENT EQUALS sexpr { 
+                int old_type = get_variable_type($1);
+                if (old_type == -1) {
+                    insert_string_variable($1);
+                } else if (old_type != TYPE_STRING) {
+                    delete_variable($1);
+                    insert_string_variable($1);
+                }
+                update_string_variable($1, $3); 
+                $$ = $1;
+            }
           ;
 
-display: CALL IDENT { display_variable($2); }
+conditional_assignment: IDENT EQUALS expr { 
+                            if (evaluate_condition(condvalue)) {
+                                int old_type = get_variable_type($1);
+                                if (old_type == -1) {
+                                    if ($3.type == TYPE_INT) {
+                                        insert_variable($1);
+                                        update_variable($1, $3.value.intValue);
+                                    } else if ($3.type == TYPE_FLOAT) {
+                                        insert_float_variable($1);
+                                        update_float_variable($1, $3.value.floatValue);
+                                    } else {
+                                        insert_string_variable($1);
+                                        update_string_variable($1, $3.value.strValue);
+                                    }
+                                } else {
+                                    if ($3.type == TYPE_INT && old_type != TYPE_INT) {
+                                        delete_variable($1);
+                                        insert_variable($1);
+                                        update_variable($1, $3.value.intValue);
+                                    } else if ($3.type == TYPE_FLOAT && old_type != TYPE_FLOAT) {
+                                        delete_variable($1);
+                                        insert_float_variable($1);
+                                        update_float_variable($1, $3.value.floatValue);
+                                    } else if ($3.type == TYPE_STRING && old_type != TYPE_STRING) {
+                                        delete_variable($1);
+                                        insert_string_variable($1);
+                                        update_string_variable($1, $3.value.strValue);
+                                    } else {
+                                        if ($3.type == TYPE_INT) 
+                                            update_variable($1, $3.value.intValue); 
+                                        else if ($3.type == TYPE_FLOAT) 
+                                            update_float_variable($1, $3.value.floatValue);
+                                        else 
+                                            update_string_variable($1, $3.value.strValue);
+                                    }
+                                }
+                            }
+                            $$ = $1;
+                        }
+                      | IDENT EQUALS sexpr { 
+                            if (evaluate_condition(condvalue)) {  // Assuming string literals are always true
+                                int old_type = get_variable_type($1);
+                                if (old_type == -1) {
+                                    insert_string_variable($1);
+                                } else if (old_type != TYPE_STRING) {
+                                    delete_variable($1);
+                                    insert_string_variable($1);
+                                }
+                                update_string_variable($1, $3); 
+                            }
+                            $$ = $1;
+                        }
+                      ;
+
+display: CALL IDENT { display_variable($2); $$ = $2; }
        ;
 
-freememory: FREEMEM LPAR IDENT RPAR {
-    void *ptr = get_memory_block_pointer($3);
-    if(ptr) {
-        remove_from_garbage_collection(ptr);
-    } else {
-        fprintf(stderr, "Error: Variable '%s' not found\n", $3);
-    }
-}
+conditional_display: CALL IDENT { if (evaluate_condition(condvalue)) { display_variable($2); } $$ = $2; }
+                    ;
+
+if_statement: IF LPAR expr RPAR { condvalue = $3.value.intValue; condition_met = condvalue; } LCB conditional_statement_list RCB elseif_statements else_statement
+            ;
+
+elseif_statements: /* empty */
+                 | elseif_statements ELSEIF LPAR expr RPAR { 
+                     if (!condition_met) {
+                         condvalue = $4.value.intValue;
+                         condition_met = condvalue;
+                     } else {
+                         condvalue = 0;
+                     }
+                   } LCB conditional_statement_list RCB
+                 ;
+
+else_statement: /* empty */
+              | ELSE { 
+                  if (!condition_met) { // Only evaluate if no previous condition was met
+                      condvalue = 1; 
+                      condition_met = 1; 
+                  } else {
+                      condvalue = 0; // Prevent the else block from executing
+                  }
+                } LCB conditional_statement_list RCB
+              ;
+
+conditional_if_statement: IF LPAR expr RPAR { condvalue = $3.value.intValue; } LCB conditional_statement_list RCB elseif_statements else_statement
+                        ;
 
 expr: NUMBER { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1 }; }
     | FLOAT_NUMBER { $$ = (typeof($$)){ .type = TYPE_FLOAT, .value.floatValue = $1 }; }
@@ -214,7 +379,28 @@ expr: NUMBER { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1 }; }
             $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = 0 };
         }
     }
+    | expr EQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
+                                                (($1.type == TYPE_INT && $1.value.intValue == $3.value.intValue) || 
+                                                 ($1.type == TYPE_FLOAT && $1.value.floatValue == $3.value.floatValue) || 
+                                                 ($1.type == TYPE_STRING && strcmp($1.value.strValue, $3.value.strValue) == 0)) }; }
+    | expr NEQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = !($1.type == $3.type) || 
+                                                 (($1.type == TYPE_INT && $1.value.intValue != $3.value.intValue) || 
+                                                  ($1.type == TYPE_FLOAT && $1.value.floatValue != $3.value.floatValue) || 
+                                                  ($1.type == TYPE_STRING && strcmp($1.value.strValue, $3.value.strValue) != 0)) }; }
+    | expr LT expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
+                                               (($1.type == TYPE_INT && $1.value.intValue < $3.value.intValue) || 
+                                                ($1.type == TYPE_FLOAT && $1.value.floatValue < $3.value.floatValue)) }; }
+    | expr GT expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
+                                               (($1.type == TYPE_INT && $1.value.intValue > $3.value.intValue) || 
+                                                ($1.type == TYPE_FLOAT && $1.value.floatValue > $3.value.floatValue)) }; }
+    | expr LEQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
+                                                (($1.type == TYPE_INT && $1.value.intValue <= $3.value.intValue) || 
+                                                 ($1.type == TYPE_FLOAT && $1.value.floatValue <= $3.value.floatValue)) }; }
+    | expr GEQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
+                                                (($1.type == TYPE_INT && $1.value.intValue >= $3.value.intValue) || 
+                                                 ($1.type == TYPE_FLOAT && $1.value.floatValue >= $3.value.floatValue)) }; }
     | LPAR expr RPAR { $$ = $2; }
+    
     ;
 
 sexpr: STRING_LITERAL { $$ = strdup($1); }
@@ -228,3 +414,15 @@ sexpr: STRING_LITERAL { $$ = strdup($1); }
      ;
 
 %%
+
+int is_number(const char* str) {
+    char* endptr;
+    strtol(str, &endptr, 10);
+    return *endptr == '\0';
+}
+
+int is_float(const char* str) {
+    char* endptr;
+    strtof(str, &endptr);
+    return *endptr == '\0';
+}

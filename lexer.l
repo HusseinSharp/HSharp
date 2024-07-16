@@ -78,8 +78,6 @@ void finish_include() {
     }
 }
 
-
-
 void print_debug(const char *msg) {
     printf("DEBUG: %s\n", msg);
 }
@@ -129,13 +127,21 @@ STRING     \"[^\"]*\"
 {DIGIT}+    { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.num = atoi(yytext); return NUMBER; }
 "-"{DIGIT}+ { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.num = atoi(yytext); return NUMBER; }
 {FLOAT}+    { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.fnum = atof(yytext); return FLOAT_NUMBER; }
-"-"{FLOAT}+     { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.fnum = atof(yytext); return FLOAT_NUMBER; }
+"-"{FLOAT}+ { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.fnum = atof(yytext); return FLOAT_NUMBER; }
 {STRING}    { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.str = strdup(yytext); return STRING_LITERAL; }
 "Var"       { strncpy(current_token_text, yytext, sizeof(current_token_text)); return VAR; }
 "Void Main()" { strncpy(current_token_text, yytext, sizeof(current_token_text)); return MAIN; }
 "Call"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return CALL; }
 "Library"   { strncpy(current_token_text, yytext, sizeof(current_token_text)); return LIBDEF; }
-"Free"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return FREEMEM; }
+"if"        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return IF; }
+"else"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return ELSE; }
+"else if"   {strncpy(current_token_text, yytext, sizeof(current_token_text)); return ELSEIF;}
+"=="        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return EQ; }
+"!="        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return NEQ; }
+"<="        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return LEQ; }
+">="        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return GEQ; }
+"<"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return LT; }
+">"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return GT; }
 {IDENT}     { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.str = strdup(yytext); return IDENT; }
 "+"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return PLUS; }
 "-"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return MINUS; }
