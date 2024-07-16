@@ -1,27 +1,28 @@
-/#
------------------------------------------------------------
-|                                                         |
-|        A program that calculate the area of a circle    |
-|        using the radius and pi constant                 |
-|       using the formula: A = PI * (Radius * Radius)     |
-|                                                         |              
-|           program created by: Hussein Abdul-Ameer       |
-|                                                         |
------------------------------------------------------------
-#/
-Void Main(){
-Var PITEXT ="PI ER : ";  ## pi string for output
-Var PINUM = 3.14159265359; ## pi constant
-Var Radius = 15;       ## radius variable
-Var RadiusTEXT = "Radius er: ";  ## radius text
-Var Areal = PINUM * (Radius * Radius); ## areal variable
-Var String = PITEXT + PINUM;  ## string for output
-Var AREALTEXT ="AREAL ER: "; ## string for output
-Var StringTO = AREALTEXT + Areal; ## string for output
-Var StringTRE = RadiusTEXT + Radius; ## string for output
+Import "filen.hslib"
 
-Call StringTRE;  ## print string to screen
-Call String;   ## print string to screen
-Call StringTO;  ## print string to screen
+Void Main(){
+   Var s = 20;
+   Var r = 30;
+   Var g = 20;
+   Var d ="";
+
+/#
+if first case is true ignore second and third,
+ if first case is false check second case, if thats true then ignore third case,
+  if second and first cases are false then execute third case
+#/
+
+if(s<r){
+ d ="s er mindre en r";
+ 
+}
+else if(g==s){
+d = "g er lik s";
+}
+else{
+d = "r er storre en s";
+};
+
+Call d;
 
 };

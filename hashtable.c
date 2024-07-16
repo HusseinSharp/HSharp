@@ -258,6 +258,29 @@ void update_string_variable(const char *name, const char *value) {
     fprintf(stderr, "Error: String variable '%s' not declared\n", name);
 }
 
+void delete_variable(const char *name) {
+    for (int depth = current_scope_depth; depth >= 0; --depth) {
+        unsigned int index = hash(name);
+        struct Node *current = symbol_table_stack[depth][index];
+        struct Node *prev = NULL;
+        while (current != NULL) {
+            if (strcmp(current->name, name) == 0) {
+                if (prev == NULL) {
+                    symbol_table_stack[depth][index] = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+                free(current->name);
+                free(current->value);
+                free(current);
+                return;
+            }
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
 void update_array_element(const char *name, int index, int value, int array_size) {
     for (int depth = current_scope_depth; depth >= 0; --depth) {
         unsigned int array_index = hash(name);
@@ -345,6 +368,20 @@ char* get_string_variable_value(const char *name) {
     return "";  // Return a default value
 }
 
+int get_variable_type(const char *name) {
+    for (int depth = current_scope_depth; depth >= 0; --depth) {
+        unsigned int index = hash(name);
+        struct Node *current = symbol_table_stack[depth][index];
+        while (current != NULL) {
+            if (strcmp(current->name, name) == 0) {
+                return current->type;
+            }
+            current = current->next;
+        }
+    }
+    return -1;  // Return -1 if variable not found
+}
+
 int get_array_element_value(const char *name, int index, int array_size) {
     for (int depth = current_scope_depth; depth >= 0; --depth) {
         unsigned int array_index = hash(name);
@@ -398,7 +435,11 @@ void display_variable(const char *name) {
                         printf("%s = %d\n", name, *((int *)current->value));
                         break;
                     case TYPE_FLOAT:
-                        printf("%s = %f\n", name, *((float *)current->value));
+                        if (is_nan(*((float *)current->value))) {
+                            printf("%s = nan\n", name);
+                        } else {
+                            printf("%s = %f\n", name, *((float *)current->value));
+                        }
                         break;
                     case TYPE_STRING:
                         printf("%s = \"%s\"\n", name, (char *)current->value);
@@ -493,4 +534,8 @@ char* float_to_string(float value) {
     }
     sprintf(buffer, "%f", value);
     return buffer;
+}
+
+int is_nan(float value) {
+    return value != value;
 }

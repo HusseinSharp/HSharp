@@ -1,4 +1,4 @@
 Library{
-Var a = 20;
-Call a;
+Var s = "hei";
+Call s;
 };

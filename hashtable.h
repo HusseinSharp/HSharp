@@ -49,9 +49,12 @@ int get_variable_value(const char *name);
 float get_float_variable_value(const char *name);
 char* get_string_variable_value(const char *name);
 void display_variable(const char *name);
+int is_nan(float value);
 
 char* concatStrings(const char* str1, const char* str2);
 char* int_to_string(int value);
 char* float_to_string(float value);
+void delete_variable(const char *name);
+int get_variable_value(const char *name);
 
 #endif  // HASHTABLE_H

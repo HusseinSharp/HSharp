@@ -1,5 +1,4 @@
 Library{
-    Var bibliotek;
-    bibliotek = 20;
-    Call bibliotek;
+   Var bibiliotek = 20;
+   Call bibiliotek;
 };
