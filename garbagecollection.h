@@ -1,5 +1,3 @@
-// garbage_collection.h
-
 #ifndef GARBAGE_COLLECTION_H
 #define GARBAGE_COLLECTION_H
 
