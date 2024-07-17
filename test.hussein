@@ -13,8 +13,7 @@ if first case is true ignore second and third,
 #/
 
 if(s<r){
- d ="s er mindre en r";
- 
+ d ="s er mindre en r"; 
 }
 else if(g==s){
 d = "g er lik s";
