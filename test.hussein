@@ -1,3 +1,9 @@
+/# ------------------------------------------------ #/
+/#          A program made by Hussein Abdul-Ameer   #/
+/#                      20.07.2024                  #/
+/#                      if statements               #/
+/# ------------------------------------------------ #/
+
 Import "filen.hslib"
 
 Void Main(){
