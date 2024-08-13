@@ -77,6 +77,8 @@
 %token <str> GT
 %token <str> LEQ
 %token <str> GEQ
+%token <str> OR
+%token <str> AND
 %token <str> ELSEIF
 
 %type <exprval> expr
@@ -89,7 +91,8 @@
 
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
-%left EQ NEQ LT GT LEQ GEQ
+%left EQ NEQ LT GT LEQ GEQ OR AND
+
 
 %start program
 
@@ -399,6 +402,28 @@ expr: NUMBER { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1 }; }
     | expr GEQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
                                                 (($1.type == TYPE_INT && $1.value.intValue >= $3.value.intValue) || 
                                                  ($1.type == TYPE_FLOAT && $1.value.floatValue >= $3.value.floatValue)) }; }
+    | expr OR expr {
+        if ($1.type == TYPE_STRING || $3.type == TYPE_STRING) {
+            fprintf(stderr, "Error: Cannot apply '||' on strings\n");
+            $$ = (typeof($$)){ .type = TYPE_FLOAT, .value.floatValue = NAN };
+        } else if ($1.type == TYPE_FLOAT || $3.type == TYPE_FLOAT) {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = (($1.type == TYPE_INT ? $1.value.intValue : $1.value.floatValue) != 0) ||
+                                                         (($3.type == TYPE_INT ? $3.value.intValue : $3.value.floatValue) != 0) };
+        } else {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1.value.intValue || $3.value.intValue };
+        }
+    }
+    | expr AND expr {
+        if ($1.type == TYPE_STRING || $3.type == TYPE_STRING) {
+            fprintf(stderr, "Error: Cannot apply '&&' on strings\n");
+            $$ = (typeof($$)){ .type = TYPE_FLOAT, .value.floatValue = NAN };
+        } else if ($1.type == TYPE_FLOAT || $3.type == TYPE_FLOAT) {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = (($1.type == TYPE_INT ? $1.value.intValue : $1.value.floatValue) != 0) &&
+                                                         (($3.type == TYPE_INT ? $3.value.intValue : $3.value.floatValue) != 0) };
+        } else {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1.value.intValue && $3.value.intValue };
+        }
+    }
     | LPAR expr RPAR { $$ = $2; }
     
     ;
