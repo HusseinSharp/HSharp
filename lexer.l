@@ -90,7 +90,7 @@ FLOAT      {DIGIT}+"."{DIGIT}+
 STRING     \"[^\"]*\"
 
 %option stack
-%x INCL FUNC_BODY
+%x INCL 
 
 %%
 
@@ -142,6 +142,9 @@ STRING     \"[^\"]*\"
 ">="        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return GEQ; }
 "<"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return LT; }
 ">"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return GT; }
+"||" { strncpy(current_token_text, yytext, sizeof(current_token_text)); return OR; }
+"&&" { strncpy(current_token_text, yytext, sizeof(current_token_text)); return AND; }
+
 {IDENT}     { strncpy(current_token_text, yytext, sizeof(current_token_text)); yylval.str = strdup(yytext); return IDENT; }
 "+"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return PLUS; }
 "-"         { strncpy(current_token_text, yytext, sizeof(current_token_text)); return MINUS; }
