@@ -4,30 +4,21 @@
 /#                      if statements               #/
 /# ------------------------------------------------ #/
 
-Import "filen.hslib"
-
 Void Main(){
-   Var s = 20;
-   Var r = 30;
-   Var g = 20;
-   Var d ="";
+  ## declear variables
+  Var svar ="";
+  Var d = 4; 
+  Var s = 3;
+  Var a = 2;
 
-/#
-if first case is true ignore second and third,
- if first case is false check second case, if thats true then ignore third case,
-  if second and first cases are false then execute third case
-#/
+  if((d>s)&&(d>a)){
+    ## the content getting executed if the statement is true
+      svar = "true"; ## set the svar variable to true
+  }
+  else {
+        ## the content getting executed if the statement is false
+      svar = "false"; ## set the svar variable to false
+  };
 
-if(s<r){
- d ="s er mindre en r"; 
-}
-else if(g==s){
-d = "g er lik s";
-}
-else{
-d = "r er storre en s";
-};
-
-Call d;
-
+     Call svar; ## print out the result of the svar variable
 };
