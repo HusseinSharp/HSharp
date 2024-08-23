@@ -54,7 +54,7 @@ void handle_include(const char* filename) {
     included_files_count++;
 
     // Enter library scope
-    enter_scope();
+   
 
     file_stack[++file_stack_top] = file;
     yypush_buffer_state(yy_create_buffer(file, YY_BUF_SIZE));
@@ -72,7 +72,7 @@ void finish_include() {
         yypop_buffer_state();
         if (file_stack_top < 0) {
             // Exit library scope
-            exit_scope();
+         
             printf("closing library file\n");
         }
     }
@@ -133,6 +133,7 @@ STRING     \"[^\"]*\"
 "Void Main()" { strncpy(current_token_text, yytext, sizeof(current_token_text)); return MAIN; }
 "Call"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return CALL; }
 "Library"   { strncpy(current_token_text, yytext, sizeof(current_token_text)); return LIBDEF; }
+"Input"        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return USER_INPUT; }
 "if"        { strncpy(current_token_text, yytext, sizeof(current_token_text)); return IF; }
 "else"      { strncpy(current_token_text, yytext, sizeof(current_token_text)); return ELSE; }
 "else if"   {strncpy(current_token_text, yytext, sizeof(current_token_text)); return ELSEIF;}

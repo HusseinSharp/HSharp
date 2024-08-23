@@ -1,24 +1,8 @@
-/# ------------------------------------------------ #/
-/#          A program made by Hussein Abdul-Ameer   #/
-/#                      20.07.2024                  #/
-/#                      if statements               #/
-/# ------------------------------------------------ #/
+Import "library.hslib"
 
 Void Main(){
-  ## declear variables
-  Var svar ="";
-  Var d = 4; 
-  Var s = 3;
-  Var a = 2;
 
-  if((d>s)&&(d>a)){
-    ## the content getting executed if the statement is true
-      svar = "true"; ## set the svar variable to true
-  }
-  else {
-        ## the content getting executed if the statement is false
-      svar = "false"; ## set the svar variable to false
-  };
+Call s;
 
-     Call svar; ## print out the result of the svar variable
+
 };
