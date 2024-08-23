@@ -36,3 +36,14 @@ Var svar ="";
 Call svar;
 };
 ```
+### Getting input from user(any datatype)
+```
+Void Main(){
+Input a;
+Input b;
+Var c = a + b;
+Call a;
+Call b;
+Call c;
+};
+```
