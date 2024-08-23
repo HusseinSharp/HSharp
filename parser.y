@@ -67,6 +67,7 @@
 %token <str> IDENT
 %token <str> LSB
 %token <str> RSB
+%token <str> USER_INPUT
 %token <str> COMMA
 %token <str> IMPORT
 %token <str> IF
@@ -83,11 +84,11 @@
 
 %type <exprval> expr
 %type <str> sexpr
-%type <str> var_declaration assignment display
+%type <str> var_declaration assignment display input_statement
 %type <str> statement statement_list
 %type <str> conditional_statement conditional_statement_list
 %type <str> libprogstart if_statement elseif_statements else_statement conditional_if_statement
-%type <str> conditional_display conditional_var_declaration conditional_assignment
+%type <str> conditional_display conditional_var_declaration conditional_assignment conditional_input_statement
 
 %left PLUS MINUS
 %left MULTIPLY DIVIDE
@@ -107,7 +108,7 @@ start_stmt: libprogstart mainprog
           | /* empty */
           ;
 
-mainprog: import_list_opt MAIN LCB { enter_scope(); } statement_list RCB { exit_scope(); } SEMICOLON
+mainprog: import_list_opt MAIN LCB statement_list RCB  SEMICOLON
         ;
 
 import_list_opt: import_list
@@ -120,7 +121,7 @@ import_list: import_list IMPORT_stmt
 
 IMPORT_stmt: IMPORT FILENAME ;
 
-libprogstart: LIBDEF LCB { enter_scope(); } statement_list RCB { exit_scope(); } SEMICOLON;
+libprogstart: LIBDEF LCB statement_list RCB  SEMICOLON;
 
 statement_list: /* empty */ { $$ = ""; }
               | statement_list statement SEMICOLON { $$ = $1; }
@@ -134,12 +135,14 @@ statement: var_declaration { $$ = $1; }
          | assignment { $$ = $1; }
          | display { $$ = $1; }
          | if_statement { $$ = ""; }
+         | input_statement {$$ ="";}
          ;
 
 conditional_statement: conditional_var_declaration { $$ = $1; }
                      | conditional_assignment { $$ = $1; }
                      | conditional_display { $$ = $1; }
                      | conditional_if_statement { $$ = ""; }
+                     | conditional_input_statement {$$ ="";}
                      ;
 
 var_declaration: VAR IDENT EQUALS expr { 
@@ -320,6 +323,91 @@ else_statement: /* empty */
 conditional_if_statement: IF LPAR expr RPAR { condvalue = $3.value.intValue; } LCB conditional_statement_list RCB elseif_statements else_statement
                         ;
 
+input_statement: USER_INPUT IDENT {
+    char input_buffer[256];
+    printf("Enter value for %s: ", $2);
+    fgets(input_buffer, sizeof(input_buffer), stdin);
+    // Remove newline character from input if present
+    input_buffer[strcspn(input_buffer, "\n")] = '\0';
+
+    int var_type = get_variable_type($2);
+    
+    // If the variable is not declared, determine its type from the input
+    if (var_type == -1) {
+        if (is_number(input_buffer)) {
+            int value = atoi(input_buffer);
+            insert_variable($2);  // Declare as an integer variable
+            update_variable($2, value);  // Update with input value
+        } else if (is_float(input_buffer)) {
+            float value = atof(input_buffer);
+            insert_float_variable($2);  // Declare as a float variable
+            update_float_variable($2, value);  // Update with input value
+        } else {
+            insert_string_variable($2);  // Declare as a string variable
+            update_string_variable($2, input_buffer);  // Update with input value
+        }
+    } else {
+        // If the variable is already declared, update it based on its existing type
+        if (var_type == TYPE_INT && is_number(input_buffer)) {
+            int value = atoi(input_buffer);
+            update_variable($2, value);
+        } else if (var_type == TYPE_FLOAT && is_float(input_buffer)) {
+            float value = atof(input_buffer);
+            update_float_variable($2, value);
+        } else if (var_type == TYPE_STRING) {
+            update_string_variable($2, input_buffer);
+        } else {
+            fprintf(stderr, "Error: Type mismatch for variable %s\n", $2);
+        }
+    }
+
+    $$ = $2;
+}
+;
+conditional_input_statement: USER_INPUT IDENT {
+    if (evaluate_condition(condvalue)) {
+        char input_buffer[256];
+        printf("Enter value for %s: ", $2);
+        fgets(input_buffer, sizeof(input_buffer), stdin);
+        // Remove newline character from input if present
+        input_buffer[strcspn(input_buffer, "\n")] = '\0';
+
+        int var_type = get_variable_type($2);
+        
+        // If the variable is not declared, determine its type from the input
+        if (var_type == -1) {
+            if (is_number(input_buffer)) {
+                int value = atoi(input_buffer);
+                insert_variable($2);  // Declare as an integer variable
+                update_variable($2, value);  // Update with input value
+            } else if (is_float(input_buffer)) {
+                float value = atof(input_buffer);
+                insert_float_variable($2);  // Declare as a float variable
+                update_float_variable($2, value);  // Update with input value
+            } else {
+                insert_string_variable($2);  // Declare as a string variable
+                update_string_variable($2, input_buffer);  // Update with input value
+            }
+        } else {
+            // If the variable is already declared, update it based on its existing type
+            if (var_type == TYPE_INT && is_number(input_buffer)) {
+                int value = atoi(input_buffer);
+                update_variable($2, value);
+            } else if (var_type == TYPE_FLOAT && is_float(input_buffer)) {
+                float value = atof(input_buffer);
+                update_float_variable($2, value);
+            } else if (var_type == TYPE_STRING) {
+                update_string_variable($2, input_buffer);
+            } else {
+                fprintf(stderr, "Error: Type mismatch for variable %s\n", $2);
+            }
+        }
+    }
+    $$ = $2;
+}
+;
+
+
 expr: NUMBER { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1 }; }
     | FLOAT_NUMBER { $$ = (typeof($$)){ .type = TYPE_FLOAT, .value.floatValue = $1 }; }
     | IDENT { 
@@ -393,9 +481,15 @@ expr: NUMBER { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1 }; }
     | expr LT expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
                                                (($1.type == TYPE_INT && $1.value.intValue < $3.value.intValue) || 
                                                 ($1.type == TYPE_FLOAT && $1.value.floatValue < $3.value.floatValue)) }; }
-    | expr GT expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
-                                               (($1.type == TYPE_INT && $1.value.intValue > $3.value.intValue) || 
-                                                ($1.type == TYPE_FLOAT && $1.value.floatValue > $3.value.floatValue)) }; }
+    |  expr GT expr { 
+        if ($1.type == TYPE_FLOAT || $3.type == TYPE_FLOAT) {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = 
+                ($1.type == TYPE_FLOAT ? $1.value.floatValue : $1.value.intValue) > 
+                ($3.type == TYPE_FLOAT ? $3.value.floatValue : $3.value.intValue) };
+        } else {
+            $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = $1.value.intValue > $3.value.intValue };
+        }
+    }
     | expr LEQ expr { $$ = (typeof($$)){ .type = TYPE_INT, .value.intValue = ($1.type == $3.type) && 
                                                 (($1.type == TYPE_INT && $1.value.intValue <= $3.value.intValue) || 
                                                  ($1.type == TYPE_FLOAT && $1.value.floatValue <= $3.value.floatValue)) }; }

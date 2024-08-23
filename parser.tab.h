@@ -67,17 +67,20 @@ extern int yydebug;
      IDENT = 276,
      LSB = 277,
      RSB = 278,
-     COMMA = 279,
-     IMPORT = 280,
-     IF = 281,
-     ELSE = 282,
-     EQ = 283,
-     NEQ = 284,
-     LT = 285,
-     GT = 286,
-     LEQ = 287,
-     GEQ = 288,
-     ELSEIF = 289
+     USER_INPUT = 279,
+     COMMA = 280,
+     IMPORT = 281,
+     IF = 282,
+     ELSE = 283,
+     EQ = 284,
+     NEQ = 285,
+     LT = 286,
+     GT = 287,
+     LEQ = 288,
+     GEQ = 289,
+     OR = 290,
+     AND = 291,
+     ELSEIF = 292
    };
 #endif
 
@@ -102,7 +105,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 106 "parser.tab.h"
+#line 109 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

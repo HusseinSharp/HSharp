@@ -1,0 +1,4 @@
+Library{
+Var pi = 3.14159265359;
+Input s;
+};
