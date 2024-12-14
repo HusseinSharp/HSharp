@@ -1,0 +1,13 @@
+[book]
+title = "My First Book"
+author = "Hussein Khudhaer Abdul-Ameer "
+description = "a documentation page"
+language = "en"
+src = "docs"
+
+[build]
+build-dir = "documentation"
+create-missing = true
+
+[output.html]
+default-theme = "light"
